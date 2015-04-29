@@ -9,7 +9,7 @@ package org.mule.module.apikit;
 import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.api.source.MessageSource;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.module.http.internal.listener.DefaultHttpListener;
+import org.mule.module.http.api.listener.HttpListener;
 import org.mule.module.http.internal.listener.DefaultHttpListenerConfig;
 
 public class MessageSourceAdapter
@@ -23,9 +23,9 @@ public class MessageSourceAdapter
         {
             delegate = new MessageSourceEndpointAdapter((ImmutableEndpoint) messageSource);
         }
-        else if (messageSource instanceof DefaultHttpListener)
+        else if (messageSource instanceof HttpListener)
         {
-            delegate = new MessageSourceListenerAdapter((DefaultHttpListener) messageSource);
+            delegate = new MessageSourceListenerAdapter((HttpListener) messageSource);
         }
         else
         {
@@ -88,10 +88,10 @@ public class MessageSourceAdapter
     private class MessageSourceListenerAdapter implements IMessageSource
     {
 
-        private DefaultHttpListener listener;
+        private HttpListener listener;
         private DefaultHttpListenerConfig config;
 
-        public MessageSourceListenerAdapter(DefaultHttpListener messageSource)
+        public MessageSourceListenerAdapter(HttpListener messageSource)
         {
             listener = messageSource;
             config = (DefaultHttpListenerConfig) messageSource.getConfig();
