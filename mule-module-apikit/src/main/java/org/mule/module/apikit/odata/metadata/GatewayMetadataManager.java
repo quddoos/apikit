@@ -3,6 +3,7 @@ package org.mule.module.apikit.odata.metadata;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataEntityNotFoundException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFileNotFoundException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
@@ -22,17 +23,17 @@ public class GatewayMetadataManager {
 	private EntitySet entitySet;
 	private JsonSchemaManager schemaManager;
 
-	public GatewayMetadataManager() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException {
+	public GatewayMetadataManager() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
 		super();
 		schemaManager = new JsonSchemaManager();
 		refreshMetadata();
 	}
 
-	private void refreshMetadata() throws JsonSyntaxException, FileNotFoundException, IOException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound {
+	private void refreshMetadata() throws JsonSyntaxException, FileNotFoundException, IOException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
 		entitySet = schemaManager.getEntitiesFromSchema();
 	}
 
-	public EntitySet getEntitySet() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException {
+	public EntitySet getEntitySet() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
 		if (entitySet == null) {
 			refreshMetadata();
 		}

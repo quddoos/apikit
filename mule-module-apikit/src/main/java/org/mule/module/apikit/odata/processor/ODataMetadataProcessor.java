@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
 
+import org.json.JSONException;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.AbstractRouter;
 import org.mule.module.apikit.odata.ODataPayload;
@@ -37,7 +38,7 @@ public class ODataMetadataProcessor extends ODataRequestProcessor {
 	    WrongYamlFormatException, GatewayMetadataFileNotFoundException,
 	    GatewayMetadataResourceNotFound,
 	    GatewayMetadataMissingFieldsException, JsonSyntaxException,
-	    FileNotFoundException, IOException {
+	    FileNotFoundException, IOException, JSONException {
 	Writer w = new StringWriter();
 	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
 	EdmDataServices ees = Helper.createMetadata(gwMetadataManager

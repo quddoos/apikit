@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFileNotFoundException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
@@ -98,7 +99,7 @@ public class Helper {
 	}
 
 	public static GatewayMetadataManager getMetadataManager() throws JsonSyntaxException, FileNotFoundException, WrongYamlFormatException,
-			GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, IOException {
+			GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, IOException, JSONException {
 		GatewayMetadataManager gwMetadataManager = new GatewayMetadataManager();
 		return gwMetadataManager;
 	}

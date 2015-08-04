@@ -15,6 +15,7 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.json.JSONException;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFileNotFoundException;
@@ -50,7 +51,7 @@ public class ODataResponseTransformer {
     }
 
     private static String writeOutput(List<Entity> entities2, String entityName,
-	    String url, String format) throws JsonSyntaxException, FileNotFoundException, WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, IOException {
+	    String url, String format) throws JsonSyntaxException, FileNotFoundException, WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, IOException, JSONException {
 	StringWriter sw = new StringWriter();
 	FormatWriter<EntitiesResponse> fw = FormatWriterFactory
 		.getFormatWriter(EntitiesResponse.class,
