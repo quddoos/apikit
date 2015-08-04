@@ -1,0 +1,155 @@
+#%RAML 0.8
+title: Auto-generated RAML for DataGateway
+version: "0.1"
+traits:
+  - orderby:
+      queryParameters:
+        parms:
+          description: The number of pages to return
+          type: string
+  - top:
+      queryParameters:
+        parms:
+          description: The number of pages to return
+          type: number
+  - skip:
+      queryParameters:
+        parms:
+          description: The number of pages to return
+          type: number
+  - filter:
+      queryParameters:
+        parms:
+          description: Collection of filters
+          type: array
+  - expand:
+      queryParameters:
+        parms:
+          description: Collection of filters
+          type: string
+  - format:
+      queryParameters:
+        parms:
+          description: Collection of filters
+          type: string
+  - select:
+      queryParameters:
+        parms:
+          description: Collection of filters
+          type: string
+  - inlinecount:
+      queryParameters:
+        parms:
+          description: Collection of filters
+          type: string
+schemas: 
+  - orders: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "name": "orders",
+        "remoteEntity": "Orders",
+        "hasPrimaryKey": true,
+        "properties": {
+          "OrderID": {
+            "sample": "10248",
+            "type": "integer",
+            "length": "11",
+            "description": "",
+            "key": true,
+            "nullable": false
+          },
+          "ShipName": {
+            "sample": "",
+            "type": "string",
+            "length": "40",
+            "description": "",
+            "key": false,
+            "nullable": true
+          },
+          "ShipAddress": {
+            "sample": "60",
+            "type": "string",
+            "length": "60",
+            "description": "",
+            "key": false,
+            "nullable": true
+          }
+        }
+      }
+  - customers: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "name": "customers",
+        "remoteEntity": "Customers",
+        "hasPrimaryKey": true,
+        "properties": {
+          "CustomerID": {
+            "sample": "10248",
+            "type": "string",
+            "length": "5",
+            "description": "",
+            "key": true,
+            "nullable": false
+          },
+          "CompanyName": {
+            "sample": "",
+            "type": "string",
+            "length": "40",
+            "description": "",
+            "key": false,
+            "nullable": true
+          },
+          "ContactName": {
+            "sample": "",
+            "type": "string",
+            "length": "30",
+            "description": "",
+            "key": false,
+            "nullable": true
+          },
+          "ContactTitle": {
+            "sample": "",
+            "type": "string",
+            "length": "30",
+            "description": "",
+            "key": false,
+            "nullable": true
+          }
+        }
+      }
+
+/orders: 
+  get: 
+    description: Read
+    is: [orderby, top, skip, filter, expand, format, select, inlinecount]
+  delete: 
+    description: Delete
+  post: 
+    description: Create
+  /{id}: 
+    get: 
+      description: Read
+      is: [orderby, top, skip, filter, expand, format, select, inlinecount]
+    delete: 
+      description: Delete
+    put: 
+      description: Update
+
+/customers: 
+  get: 
+    description: Read
+    is: [orderby, top, skip, filter, expand, format, select, inlinecount]
+  delete: 
+    description: Delete
+  post: 
+    description: Create
+  /{id}: 
+    get: 
+      description: Read
+      is: [orderby, top, skip, filter, expand, format, select, inlinecount]
+    delete: 
+      description: Delete
+    put: 
+      description: Update
