@@ -11,31 +11,31 @@ import org.mule.module.apikit.odata.processor.ODataMetadataProcessor;
 import org.mule.module.apikit.odata.processor.ODataRequestProcessor;
 import org.mule.module.apikit.odata.processor.ODataServiceDocumentProcessor;
 
-
 public class ODataUriParser {
 
-    private static final String ODATA_SVC_URI_PREFIX = "odata.svc/";
-    
-    /**
-     * Parses the URI and returns the right processor to handle 
-     * the request
-     * @param event
-     * @return
-     */
-    public static ODataRequestProcessor parse(String path, String query) {
-	
-	path = path.replace(ODATA_SVC_URI_PREFIX, "");
-	
-        //make nice
-	if (path.contains("$metadata")) {
-	    return new ODataMetadataProcessor();
-	} else if (path.isEmpty()) {
-	    return new ODataServiceDocumentProcessor();
-	} else {
-	    String apikitFriendlyUri = "/resource/1"; //complete parsing and transformation
-	    return new ODataApikitProcessor(apikitFriendlyUri);
+	private static final String ODATA_SVC_URI_PREFIX = "odata.svc/";
+
+	/**
+	 * Parses the URI and returns the right processor to handle the request
+	 * 
+	 * @param event
+	 * @return
+	 */
+	public static ODataRequestProcessor parse(String path, String query) {
+
+		path = path.replace(ODATA_SVC_URI_PREFIX, "");
+
+		// make nice
+		if (path.contains("$metadata")) {
+			return new ODataMetadataProcessor();
+		} else if (path.isEmpty()) {
+			return new ODataServiceDocumentProcessor();
+		} else {
+			String apikitFriendlyUri = "/resource/1"; // complete parsing and
+																								// transformation
+			return new ODataApikitProcessor(apikitFriendlyUri);
+		}
+
 	}
-    	    	
-    }
-    
+
 }

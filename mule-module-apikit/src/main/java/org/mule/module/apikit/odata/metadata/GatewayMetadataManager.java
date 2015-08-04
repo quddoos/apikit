@@ -23,17 +23,20 @@ public class GatewayMetadataManager {
 	private EntitySet entitySet;
 	private JsonSchemaManager schemaManager;
 
-	public GatewayMetadataManager() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
+	public GatewayMetadataManager() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound,
+			GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
 		super();
 		schemaManager = new JsonSchemaManager();
 		refreshMetadata();
 	}
 
-	private void refreshMetadata() throws JsonSyntaxException, FileNotFoundException, IOException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
+	private void refreshMetadata() throws JsonSyntaxException, FileNotFoundException, IOException, GatewayMetadataMissingFieldsException,
+			GatewayMetadataResourceNotFound, JSONException {
 		entitySet = schemaManager.getEntitiesFromSchema();
 	}
 
-	public EntitySet getEntitySet() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
+	public EntitySet getEntitySet() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound,
+			GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
 		if (entitySet == null) {
 			refreshMetadata();
 		}
@@ -48,6 +51,5 @@ public class GatewayMetadataManager {
 		}
 		throw new GatewayMetadataEntityNotFoundException("EntityDefinition " + entityName + " not found.");
 	}
-
 
 }

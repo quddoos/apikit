@@ -12,31 +12,31 @@ import org.mule.module.apikit.odata.model.Entity;
 
 public class ODataPayload {
 
-    private String content;
-    List<Entity> entities;
-    
-    public ODataPayload(String content) {
-	this.content = content;
-    }
-    
-    public ODataPayload(List<Entity> entities) {
-	this.entities = entities;
-    }
+	private String content;
+	List<Entity> entities;
 
-    public String getContent() {
-        return content;
-    }
+	public ODataPayload(String content) {
+		this.content = content;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public ODataPayload(List<Entity> entities) {
+		this.entities = entities;
+	}
 
-    public List<Entity> getEntities() {
-        return entities;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public void setEntities(List<Entity> entities) {
-        this.entities = entities;
-    }
-    
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public List<Entity> getEntities() {
+		return entities;
+	}
+
+	public void setEntities(List<Entity> entities) {
+		this.entities = entities;
+	}
+
 }
