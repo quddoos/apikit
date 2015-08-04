@@ -6,6 +6,9 @@
  */
 package org.mule.module.apikit;
 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 import org.mule.DefaultMuleEvent;
 import org.mule.NonBlockingVoidMuleEvent;
 import org.mule.OptimizedRequestContext;
@@ -15,6 +18,7 @@ import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.MuleRuntimeException;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.lifecycle.StartException;
 import org.mule.api.transport.ReplyToHandler;
@@ -23,21 +27,22 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.odata.ODataPayload;
+import org.mule.module.apikit.odata.ODataResponseTransformer;
+import org.mule.module.apikit.odata.ODataUriParser;
+import org.mule.module.apikit.odata.error.ODataErrorHandler;
+import org.mule.module.apikit.odata.processor.ODataRequestProcessor;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.processor.AbstractRequestResponseMessageProcessor;
-
-import com.google.common.cache.LoadingCache;
-
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.model.parameter.UriParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.LoadingCache;
 
 public abstract class AbstractRouter extends AbstractRequestResponseMessageProcessor implements ApiRouter
 {
@@ -48,6 +53,8 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
     protected AbstractConfiguration config;
     protected RamlDescriptorHandler ramlHandler;
 
+    private static final String ODATA_SVC_URI_PREFIX = "odata.svc/";
+    
     @Override
     public void start() throws MuleException
     {
@@ -69,15 +76,19 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
         this.flowConstruct = flowConstruct;
     }
 
-    protected MuleEvent processBlocking(MuleEvent event) throws MuleException
-    {
-        RouterRequest result = processRouterRequest(event);
-        event = result.getEvent();
-        if (result.getFlow() != null)
-        {
-            event = result.getFlow().process(event);
-        }
-        return processRouterResponse(event, result.getSuccessStatus());
+    @Override
+    protected MuleEvent processBlocking(MuleEvent event) throws MuleException {
+
+	if (isODataRequest(event)) {
+	    return processODataRequest(event);
+	} else {
+	    RouterRequest result = processRouterRequest(event);
+	    event = result.getEvent();
+	    if (result.getFlow() != null) {
+		event = result.getFlow().process(event);
+	    }
+	    return processRouterResponse(event, result.getSuccessStatus());
+	}
     }
 
     @Override
@@ -126,6 +137,7 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
 
     protected RouterRequest processRouterRequest(MuleEvent event) throws MuleException
     {
+    	
         HttpRestRequest request = getHttpRestRequest(event);
 
         String path = request.getResourcePath();
@@ -298,4 +310,40 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
             return successStatus;
         }
     }
+    
+    /**
+     * Returns true if the path of the HTTP request starts with the 
+     * OData prefix
+     * @param event
+     * @return
+     */
+    protected boolean isODataRequest(MuleEvent event) {	
+        HttpRestRequest request = getHttpRestRequest(event);    
+    	String path = request.getResourcePath().toLowerCase();
+    	
+    	return path.startsWith(ODATA_SVC_URI_PREFIX);
+    }
+    
+    protected MuleEvent processODataRequest(MuleEvent event) throws MuleException
+    {
+    
+	try {
+	    HttpRestRequest request = getHttpRestRequest(event);
+	    String path = request.getResourcePath();
+	    String query = ""; // get query string from request
+
+	    // OData URI Parser returns processor for Metadata, Service Document
+	    // or APIkit request
+	    ODataRequestProcessor odataRequestProcessor = ODataUriParser.parse(path, query);
+
+	    ODataPayload odataPayload = odataRequestProcessor.process(event, this);
+
+	    return ODataResponseTransformer.transform(event, odataPayload);
+
+	} catch (Exception ex) {
+	    ODataErrorHandler.handle(ex);
+	    throw new MuleRuntimeException(ex);
+	}
+    }
+
 }
