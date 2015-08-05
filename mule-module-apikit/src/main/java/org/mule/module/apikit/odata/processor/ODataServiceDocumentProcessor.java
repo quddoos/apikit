@@ -8,6 +8,7 @@ package org.mule.module.apikit.odata.processor;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URLDecoder;
 import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
@@ -27,9 +28,19 @@ public class ODataServiceDocumentProcessor extends ODataRequestProcessor {
 
     @Override
     public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
-	String format = "json";
-	String url = "www.google.com";
-	event.getMessage().setOutboundProperty("Content-Type", "application/json");
+	
+	String format = "atom";
+	String uri = URLDecoder.decode(event.getMessage().getInboundProperty("http.query.string").toString(), "UTF-8");
+
+	if (uri.contains("$format=json")) {	
+	    event.getMessage().setOutboundProperty("Content-Type", "application/json");
+	    format = "json";
+	} else {
+	    event.getMessage().setOutboundProperty("Content-Type", "application/xml");
+	    format = "atom";
+	}
+	
+	String url = "http://localhost";
 	return new ODataPayload(createServiceDocumentOutput(format, url));
     }
 

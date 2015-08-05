@@ -49,7 +49,7 @@ public class ServiceDocumentTestCase extends FunctionalTestCase
     {
         given().header("Accept", "application/json")
             .expect()
-                .response().body("value.name", hasItems("orders", "customers"))
+                .response().body("d.EntitySets", hasItems("orders", "customers"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/odata.svc?$format=json");
     }

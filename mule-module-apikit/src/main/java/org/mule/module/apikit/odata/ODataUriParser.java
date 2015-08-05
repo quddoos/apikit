@@ -34,7 +34,12 @@ public class ODataUriParser {
     public static ODataRequestProcessor parse(String path, String query)
 	    throws ODataInvalidQueryRequestException {
 
-	path = URLDecoder.decode(path.replace(ODATA_SVC_URI_PREFIX, ""));
+	path = path.replace(ODATA_SVC_URI_PREFIX, "");
+	try { 
+	    query = URLDecoder.decode(query, "UTF-8");
+	} catch (Exception e) {
+	    throw new ODataInvalidQueryRequestException(e.getMessage());
+	}
 
 	// metadata
 	if (path.contains("/$metadata")) {
@@ -45,8 +50,8 @@ public class ODataUriParser {
 	}
 
 	// service document
-	if (path.isEmpty() || path.equals("/") || path.startsWith("/?$format=")) {
-	    if (query.isEmpty()) {
+	if (path.isEmpty() || path.equals("/")) {
+	    if (query.isEmpty() || query.startsWith("$format=")) {
 		return new ODataServiceDocumentProcessor();
 	    }
 	    throw new ODataInvalidQueryRequestException();
