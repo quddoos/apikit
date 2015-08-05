@@ -12,8 +12,8 @@ import org.json.JSONObject;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinition;
-import org.mule.module.apikit.odata.metadata.model.entities.EntityProperty;
-import org.mule.module.apikit.odata.metadata.model.entities.EntitySet;
+import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionProperty;
+import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionSet;
 import org.mule.module.apikit.odata.util.FileUtils;
 
 import com.google.gson.JsonSyntaxException;
@@ -35,12 +35,12 @@ public class JsonSchemaManager {
 
     }
 
-    public EntitySet getEntitiesFromSchema() throws JsonSyntaxException,
+    public EntityDefinitionSet getEntitiesFromSchema() throws JsonSyntaxException,
 	    FileNotFoundException, IOException,
 	    GatewayMetadataMissingFieldsException,
 	    GatewayMetadataResourceNotFound, JSONException {
 
-	EntitySet entitySet = new EntitySet();
+	EntityDefinitionSet entitySet = new EntityDefinitionSet();
 	JSONObject obj = new JSONObject(
 		FileUtils.readFromFile("json-schema.json"));
 
@@ -71,9 +71,9 @@ public class JsonSchemaManager {
 	return entitySet;
     }
 
-    private List<EntityProperty> parseEntityProperties(JSONObject properties)
+    private List<EntityDefinitionProperty> parseEntityProperties(JSONObject properties)
 	    throws GatewayMetadataMissingFieldsException, JSONException {
-	List<EntityProperty> entityProperties = new ArrayList<EntityProperty>();
+	List<EntityDefinitionProperty> entityProperties = new ArrayList<EntityDefinitionProperty>();
 	if (properties != null) {
 	    Iterator it = properties.keys();
 	    while (it.hasNext()) {
@@ -99,7 +99,7 @@ public class JsonSchemaManager {
 			    .get(KEY_PROPERTY_TEXT)));
 		    checkFieldNotNull("Key", key);
 		}
-		EntityProperty newEntityProperty = new EntityProperty(
+		EntityDefinitionProperty newEntityProperty = new EntityDefinitionProperty(
 			propertyName, sample, type, nullable, length,
 			description, key);
 		entityProperties.add(newEntityProperty);

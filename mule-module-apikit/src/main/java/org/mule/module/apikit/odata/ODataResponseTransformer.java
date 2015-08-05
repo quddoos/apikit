@@ -18,11 +18,10 @@ import javax.ws.rs.core.UriInfo;
 import org.json.JSONException;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFileNotFoundException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataNotInitializedException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
-import org.mule.module.apikit.odata.metadata.exception.WrongYamlFormatException;
-import org.mule.module.apikit.odata.metadata.model.entities.EntitySet;
+import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionSet;
 import org.mule.module.apikit.odata.model.Entity;
 import org.mule.module.apikit.odata.util.Helper;
 import org.mule.module.apikit.odata.util.UriInfoImpl;
@@ -62,10 +61,7 @@ public class ODataResponseTransformer {
 
     private static String writeOutput(List<Entity> entities2,
 	    String entityName, String url, String format)
-	    throws JsonSyntaxException, FileNotFoundException,
-	    WrongYamlFormatException, GatewayMetadataFileNotFoundException,
-	    GatewayMetadataResourceNotFound,
-	    GatewayMetadataMissingFieldsException, IOException, JSONException {
+	    throws JsonSyntaxException, FileNotFoundException, IOException, JSONException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataNotInitializedException {
 	StringWriter sw = new StringWriter();
 	FormatWriter<EntitiesResponse> fw = FormatWriterFactory
 		.getFormatWriter(EntitiesResponse.class,
@@ -73,7 +69,7 @@ public class ODataResponseTransformer {
 			format, null);
 
 	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
-	EntitySet entitySet = gwMetadataManager.getEntitySet();
+	EntityDefinitionSet entitySet = gwMetadataManager.getEntitySet();
 	EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
 		entities2, entityName, entitySet);
 

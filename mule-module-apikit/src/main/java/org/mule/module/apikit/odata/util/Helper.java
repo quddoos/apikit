@@ -1,20 +1,16 @@
 package org.mule.module.apikit.odata.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFileNotFoundException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
-import org.mule.module.apikit.odata.metadata.exception.WrongYamlFormatException;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinition;
-import org.mule.module.apikit.odata.metadata.model.entities.EntityProperty;
-import org.mule.module.apikit.odata.metadata.model.entities.EntitySet;
+import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionProperty;
+import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionSet;
 import org.mule.module.apikit.odata.model.Entity;
 import org.odata4j.core.OEntities;
 import org.odata4j.core.OEntity;
@@ -33,30 +29,36 @@ import org.odata4j.edm.EdmType;
 import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.Responses;
 
-import com.google.gson.JsonSyntaxException;
-
 public class Helper {
 
-	public static EntitiesResponse convertEntitiesToOEntities(List<Entity> outputEntities, String entitySetName, EntitySet metadata1) {
-		EdmEntitySet ees = Helper.createMetadata(metadata1).getEdmEntitySet(entitySetName);
+	private static final GatewayMetadataManager gwMetadataManager = new GatewayMetadataManager();
+
+	public static EntitiesResponse convertEntitiesToOEntities(
+			List<Entity> outputEntities, String entitySetName,
+			EntityDefinitionSet metadata1) {
+		EdmEntitySet ees = Helper.createMetadata(metadata1).getEdmEntitySet(
+				entitySetName);
 		List<OEntity> entities = new ArrayList<OEntity>();
 		List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
 		int id = 0;
 		for (Entity outputEntity : outputEntities) {
 			properties = new ArrayList<OProperty<?>>();
 
-			for (Entry<String, Object> entry : outputEntity.getProperties().entrySet()) {
+			for (Entry<String, Object> entry : outputEntity.getProperties()
+					.entrySet()) {
 
-				properties.add(OProperties.string(entry.getKey(), entry.getValue() + ""));
+				properties.add(OProperties.string(entry.getKey(),
+						entry.getValue() + ""));
 			}
-			entities.add(OEntities.create(ees, OEntityKey.create(id + ""), properties, null));
+			entities.add(OEntities.create(ees, OEntityKey.create(id + ""),
+					properties, null));
 			id++;
 		}
 
 		return Responses.entities(entities, ees, null, null);
 	}
 
-	public static EdmDataServices createMetadata(EntitySet metadata) {
+	public static EdmDataServices createMetadata(EntityDefinitionSet metadata) {
 		try {
 
 			String namespace = "entities";
@@ -66,24 +68,37 @@ public class Helper {
 			List<EdmEntitySet.Builder> entitySets = new ArrayList<EdmEntitySet.Builder>();
 
 			for (EntityDefinition entityMetadata : metadata.toList()) {
-				for (EntityProperty propertyMetadata : entityMetadata.getProperties()) {
-					Builder builder = EdmProperty.newBuilder(propertyMetadata.getName()).setType(convertType(propertyMetadata.getType()));
+				for (EntityDefinitionProperty propertyMetadata : entityMetadata
+						.getProperties()) {
+					Builder builder = EdmProperty.newBuilder(
+							propertyMetadata.getName()).setType(
+							convertType(propertyMetadata.getType()));
 					builder.setNullable(propertyMetadata.isNullable());
 					properties.add(builder);
 				}
 
 				String entityName = entityMetadata.getName();
-				EdmEntityType.Builder type = EdmEntityType.newBuilder().setNamespace(namespace).setName(entityName).addKeys("id").addProperties(properties);
+				EdmEntityType.Builder type = EdmEntityType.newBuilder()
+						.setNamespace(namespace).setName(entityName)
+						.addKeys("id").addProperties(properties);
 				entityTypes.add(type);
 
-				entitySets.add(EdmEntitySet.newBuilder().setName(entityName).setEntityType(type));
+				entitySets.add(EdmEntitySet.newBuilder().setName(entityName)
+						.setEntityType(type));
 			}
 
-			EdmEntityContainer.Builder container = EdmEntityContainer.newBuilder().setName(namespace + "Entities").setIsDefault(true).addEntitySets(entitySets);
-			EdmSchema.Builder modelSchema = EdmSchema.newBuilder().setNamespace(namespace + "Model").addEntityTypes(entityTypes);
-			EdmSchema.Builder containerSchema = EdmSchema.newBuilder().setNamespace(namespace + "Container").addEntityContainers(container);
+			EdmEntityContainer.Builder container = EdmEntityContainer
+					.newBuilder().setName(namespace + "Entities")
+					.setIsDefault(true).addEntitySets(entitySets);
+			EdmSchema.Builder modelSchema = EdmSchema.newBuilder()
+					.setNamespace(namespace + "Model")
+					.addEntityTypes(entityTypes);
+			EdmSchema.Builder containerSchema = EdmSchema.newBuilder()
+					.setNamespace(namespace + "Container")
+					.addEntityContainers(container);
 
-			return EdmDataServices.newBuilder().addSchemas(containerSchema, modelSchema).build();
+			return EdmDataServices.newBuilder()
+					.addSchemas(containerSchema, modelSchema).build();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -98,9 +113,12 @@ public class Helper {
 		return EdmSimpleType.STRING;
 	}
 
-	public static GatewayMetadataManager getMetadataManager() throws JsonSyntaxException, FileNotFoundException, WrongYamlFormatException,
-			GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, IOException, JSONException {
-		GatewayMetadataManager gwMetadataManager = new GatewayMetadataManager();
+	public static GatewayMetadataManager getMetadataManager()
+			throws GatewayMetadataMissingFieldsException,
+			GatewayMetadataResourceNotFound, JSONException {
+		if (!gwMetadataManager.isInitialized()) {
+			gwMetadataManager.refreshMetadata("datagateway-definition.raml");
+		}
 		return gwMetadataManager;
 	}
 

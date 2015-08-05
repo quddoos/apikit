@@ -1,18 +1,16 @@
 package org.mule.module.apikit.odata.metadata;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.InputStream;
 
 import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataEntityNotFoundException;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFileNotFoundException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataNotInitializedException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
-import org.mule.module.apikit.odata.metadata.exception.WrongYamlFormatException;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinition;
-import org.mule.module.apikit.odata.metadata.model.entities.EntitySet;
-
-import com.google.gson.JsonSyntaxException;
+import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionSet;
+import org.mule.module.apikit.odata.metadata.raml.RamlParser;
+import org.raml.model.Raml;
 
 /**
  * 
@@ -20,36 +18,53 @@ import com.google.gson.JsonSyntaxException;
  */
 public class GatewayMetadataManager {
 
-	private EntitySet entitySet;
-	private JsonSchemaManager schemaManager;
+	private EntityDefinitionSet entitySet;
+	private RamlParser ramlParser;
 
-	public GatewayMetadataManager() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound,
-			GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
+	public GatewayMetadataManager() {
 		super();
-		schemaManager = new JsonSchemaManager();
-		refreshMetadata();
+		ramlParser = new RamlParser();
 	}
 
-	private void refreshMetadata() throws JsonSyntaxException, FileNotFoundException, IOException, GatewayMetadataMissingFieldsException,
+	public void refreshMetadata(String raml)
+			throws GatewayMetadataMissingFieldsException,
 			GatewayMetadataResourceNotFound, JSONException {
-		entitySet = schemaManager.getEntitiesFromSchema();
+		entitySet = ramlParser.getEntitiesFromRaml(raml);
 	}
 
-	public EntitySet getEntitySet() throws WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound,
-			GatewayMetadataMissingFieldsException, JsonSyntaxException, FileNotFoundException, IOException, JSONException {
+	public void refreshMetadata(InputStream raml)
+			throws GatewayMetadataMissingFieldsException,
+			GatewayMetadataResourceNotFound, JSONException {
+		entitySet = ramlParser.getEntitiesFromRaml(raml);
+	}
+
+	public void refreshMetadata(Raml raml)
+			throws GatewayMetadataMissingFieldsException,
+			GatewayMetadataResourceNotFound, JSONException {
+		entitySet = ramlParser.getEntitiesFromRaml(raml);
+	}
+
+	public EntityDefinitionSet getEntitySet()
+			throws GatewayMetadataNotInitializedException {
 		if (entitySet == null) {
-			refreshMetadata();
+			throw new GatewayMetadataNotInitializedException();
 		}
 		return entitySet;
 	}
 
-	public EntityDefinition getEntityByName(String entityName) throws GatewayMetadataEntityNotFoundException {
+	public EntityDefinition getEntityByName(String entityName)
+			throws GatewayMetadataEntityNotFoundException {
 		for (EntityDefinition EntityDefinition : entitySet.toList()) {
 			if (EntityDefinition.getName().equalsIgnoreCase(entityName)) {
 				return EntityDefinition;
 			}
 		}
-		throw new GatewayMetadataEntityNotFoundException("EntityDefinition " + entityName + " not found.");
+		throw new GatewayMetadataEntityNotFoundException("EntityDefinition "
+				+ entityName + " not found.");
+	}
+
+	public boolean isInitialized() {
+		return entitySet != null;
 	}
 
 }

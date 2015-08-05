@@ -4,7 +4,7 @@ package org.mule.module.apikit.odata.metadata.model.entities;
  * 
  * @author arielsegura
  */
-public class EntityProperty {
+public class EntityDefinitionProperty implements Comparable<EntityDefinitionProperty> {
 
 	private String name;
 	private String sample;
@@ -14,7 +14,7 @@ public class EntityProperty {
 	private String description;
 	private boolean key;
 
-	public EntityProperty(String name, String sample, String type, boolean nullable, int length, String description, boolean key) {
+	public EntityDefinitionProperty(String name, String sample, String type, boolean nullable, int length, String description, boolean key) {
 		this.name = (name != null ? name : "");
 		this.sample = (sample != null ? sample : "");
 		this.type = (type != null ? type : "");
@@ -101,12 +101,10 @@ public class EntityProperty {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + (key ? 1231 : 1237);
 		result = prime * result + length;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + (nullable ? 1231 : 1237);
-		result = prime * result + ((sample == null) ? 0 : sample.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -119,12 +117,7 @@ public class EntityProperty {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		EntityProperty other = (EntityProperty) obj;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
+		EntityDefinitionProperty other = (EntityDefinitionProperty) obj;
 		if (key != other.key)
 			return false;
 		if (length != other.length)
@@ -136,17 +129,17 @@ public class EntityProperty {
 			return false;
 		if (nullable != other.nullable)
 			return false;
-		if (sample == null) {
-			if (other.sample != null)
-				return false;
-		} else if (!sample.equals(other.sample))
-			return false;
 		if (type == null) {
 			if (other.type != null)
 				return false;
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(EntityDefinitionProperty o) {
+		return this.name.compareToIgnoreCase(o.name);
 	}
 
 }

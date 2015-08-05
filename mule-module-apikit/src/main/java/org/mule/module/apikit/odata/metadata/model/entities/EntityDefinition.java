@@ -7,14 +7,14 @@ import java.util.List;
  * 
  * @author arielsegura
  */
-public class EntityDefinition {
+public class EntityDefinition implements Comparable<EntityDefinition>{
 
 	private String name;
-	private List<EntityProperty> properties;
+	private List<EntityDefinitionProperty> properties;
 	private String remoteEntity;
 	private boolean hasPrimaryKey = false;
 
-	public EntityDefinition(String name, List<EntityProperty> properties, String remoteEntity) {
+	public EntityDefinition(String name, List<EntityDefinitionProperty> properties, String remoteEntity) {
 		this.name = name;
 		this.remoteEntity = remoteEntity;
 		this.properties = properties;
@@ -63,7 +63,7 @@ public class EntityDefinition {
 	public EntityDefinition(String name, String remoteEntity) {
 		this.name = name;
 		this.remoteEntity = remoteEntity;
-		this.properties = new ArrayList<EntityProperty>();
+		this.properties = new ArrayList<EntityDefinitionProperty>();
 	}
 
 	public boolean hasPrimaryKey() {
@@ -74,7 +74,7 @@ public class EntityDefinition {
 		this.hasPrimaryKey = hasPrimaryKey;
 	}
 
-	public void addProperty(EntityProperty entityProperty) {
+	public void addProperty(EntityDefinitionProperty entityProperty) {
 		this.properties.add(entityProperty);
 	}
 
@@ -86,11 +86,11 @@ public class EntityDefinition {
 		this.name = name;
 	}
 
-	public List<EntityProperty> getProperties() {
+	public List<EntityDefinitionProperty> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(List<EntityProperty> properties) {
+	public void setProperties(List<EntityDefinitionProperty> properties) {
 		this.properties = properties;
 	}
 
@@ -113,11 +113,16 @@ public class EntityDefinition {
 		ret.append("\"hasPrimaryKey\":" + this.hasPrimaryKey + ",");
 		ret.append("\"properties\":[");
 		String delim = "";
-		for (EntityProperty property : properties) {
+		for (EntityDefinitionProperty property : properties) {
 			ret.append(delim + property.toJsonString());
 			delim = ",";
 		}
 		ret.append("]}");
 		return ret.toString();
+	}
+	
+	@Override
+	public int compareTo(EntityDefinition o) {
+		return this.name.compareTo(o.name);
 	}
 }

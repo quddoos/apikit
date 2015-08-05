@@ -7,11 +7,11 @@ import java.util.List;
  * 
  * @author arielsegura
  */
-public class EntitySet {
+public class EntityDefinitionSet {
 
 	private List<EntityDefinition> entities;
 
-	public EntitySet() {
+	public EntityDefinitionSet() {
 		entities = new ArrayList<EntityDefinition>();
 	}
 
@@ -43,7 +43,7 @@ public class EntitySet {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		EntitySet other = (EntitySet) obj;
+		EntityDefinitionSet other = (EntityDefinitionSet) obj;
 		if (entities == null) {
 			if (other.entities != null)
 				return false;
