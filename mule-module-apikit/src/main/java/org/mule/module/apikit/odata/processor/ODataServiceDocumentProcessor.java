@@ -29,6 +29,7 @@ public class ODataServiceDocumentProcessor extends ODataRequestProcessor {
     public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
 	String format = "json";
 	String url = "www.google.com";
+	event.getMessage().setOutboundProperty("Content-Type", "application/json");
 	return new ODataPayload(createServiceDocumentOutput(format, url));
     }
 

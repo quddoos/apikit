@@ -31,6 +31,7 @@ public class ODataMetadataProcessor extends ODataRequestProcessor {
 
     @Override
     public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
+	event.getMessage().setOutboundProperty("Content-Type", "application/xml");
 	return new ODataPayload(createMetadataOutput());
     }
 

@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.odata;
+package org.mule.module.apikit.odata.endtoend;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -18,7 +18,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ServiceDocumentTestCase extends FunctionalTestCase
+public class SimpleEntityTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -40,28 +40,16 @@ public class ServiceDocumentTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/resource/odata/odata.xml";
+	return "org/mule/module/apikit/odata/odata.xml";
     }
 
-    
     @Test
-    public void serviceSheetJsonPositive() throws Exception
+    public void getUsersPositive() throws Exception
     {
         given().header("Accept", "application/json")
             .expect()
-                .response().body("value.name", hasItems("orders", "customers"))
+                .response().body("d.results.orderID", hasItems(10248, 10249))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/odata.svc?$format=json");
+            .when().get("/odata.svc/orders?$format=json");
     }
-    
-    @Test
-    public void serviceSheetXmlPositive() throws Exception
-    {
-        given().header("Accept", "application/xml")
-            .expect()
-                .response().body("service.workspace.collection", hasItems("orders"))
-                .header("Content-type", "application/xml").statusCode(200)
-            .when().get("/odata.svc");
-    }
-
 }

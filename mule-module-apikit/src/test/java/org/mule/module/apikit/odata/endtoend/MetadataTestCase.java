@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.odata;
+package org.mule.module.apikit.odata.endtoend;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -18,7 +18,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class SimpleEntityTestCase extends FunctionalTestCase
+public class MetadataTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -40,16 +40,17 @@ public class SimpleEntityTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/resource/odata/odata.xml";
+	return "org/mule/module/apikit/odata/odata.xml";
     }
-
+    
     @Test
-    public void getUsersPositive() throws Exception
+    public void MetadataPositive() throws Exception
     {
-        given().header("Accept", "application/json")
+        given().header("Accept", "application/xml")
             .expect()
-                .response().body("d.results.orderID", hasItems(10248, 10249))
-                .header("Content-type", "application/json").statusCode(200)
-            .when().get("/odata.svc/orders?$format=json");
+                .response().body("Edmx.DataServices.Schema.EntityType.@Name", hasItems("orders"))
+                .header("Content-type", "application/xml").statusCode(200)
+            .when().get("/api/odata.svc/$metadata");
     }
+    
 }

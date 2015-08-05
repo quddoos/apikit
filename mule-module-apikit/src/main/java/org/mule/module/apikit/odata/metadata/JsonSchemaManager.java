@@ -27,7 +27,7 @@ public class JsonSchemaManager {
     private static final String SAMPLE_PROPERTY_TEXT = "sample";
     private static final String TYPE_PROPERTY_TEXT = "type";
     private static final String NULLABLE_PROPERTY_TEXT = "nullable";
-    private static final String LENGTH_PROPERTY_TEXT = "maxLength";
+    private static final String LENGTH_PROPERTY_TEXT = "length";
     private static final String DESCRIPTION_PROPERTY_TEXT = "description";
     private static final String KEY_PROPERTY_TEXT = "key";
 
@@ -53,11 +53,11 @@ public class JsonSchemaManager {
 	    String entityName = (String) schemas.getJSONObject(i).keys().next();
 	    JSONObject schema = schemas.getJSONObject(i).getJSONObject(
 		    entityName);
-	    String remoteName = schema.getString("remoteName");
-	    checkFieldNotNull("Remote Name", remoteName);
+	    String remoteEntity = schema.getString("remoteEntity");
+	    checkFieldNotNull("Remote Entity", remoteEntity);
 
 	    EntityDefinition entity = new EntityDefinition(entityName,
-		    remoteName);
+		    remoteEntity);
 
 	    JSONObject properties = schema.getJSONObject("properties");
 	    if (properties == null) {
@@ -79,19 +79,24 @@ public class JsonSchemaManager {
 	    while (it.hasNext()) {
 		String propertyName = (String) it.next();
 		JSONObject property = properties.getJSONObject(propertyName);
-		String sample = String.valueOf(property.get(SAMPLE_PROPERTY_TEXT));
+		String sample = String.valueOf(property
+			.get(SAMPLE_PROPERTY_TEXT));
 		checkFieldNotNull("Sample", sample);
 		String type = String.valueOf(property.get(TYPE_PROPERTY_TEXT));
 		checkFieldNotNull("Type", type);
-		Boolean nullable = Boolean.valueOf(String.valueOf(property.get(NULLABLE_PROPERTY_TEXT)));
+		Boolean nullable = Boolean.valueOf(String.valueOf(property
+			.get(NULLABLE_PROPERTY_TEXT)));
 		checkFieldNotNull("Nullable", nullable);
-		Integer length = Integer.valueOf(String.valueOf(property.get(LENGTH_PROPERTY_TEXT)));
+		Integer length = Integer.valueOf(String.valueOf(property
+			.get(LENGTH_PROPERTY_TEXT)));
 		checkFieldNotNull("Length", length);
-		String description = String.valueOf(property.get(DESCRIPTION_PROPERTY_TEXT));
+		String description = String.valueOf(property
+			.get(DESCRIPTION_PROPERTY_TEXT));
 		checkFieldNotNull("Description", description);
 		Boolean key = false;
 		if (property.has(KEY_PROPERTY_TEXT)) {
-		    key = Boolean.valueOf(String.valueOf(property.get(KEY_PROPERTY_TEXT)));
+		    key = Boolean.valueOf(String.valueOf(property
+			    .get(KEY_PROPERTY_TEXT)));
 		    checkFieldNotNull("Key", key);
 		}
 		EntityProperty newEntityProperty = new EntityProperty(

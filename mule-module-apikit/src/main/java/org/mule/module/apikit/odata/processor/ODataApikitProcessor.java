@@ -29,22 +29,36 @@ public class ODataApikitProcessor extends ODataRequestProcessor {
 	return new ODataPayload(processEntityRequest(event, router));
     }
 
+    public String getUri() {
+	return uri;
+    }
+
+    public void setUri(String uri) {
+	this.uri = uri;
+    }
+
     public List<Entity> processEntityRequest(MuleEvent event, AbstractRouter router) {
 	List<Entity> entities = new ArrayList<Entity>();
-	
+
 	try {
 	    final StringBuffer result = new StringBuffer();
-	    
+
 	    MuleEvent response = router.process(event);
 	    Object payload = response.getMessage().getPayload();
 
 	    if (payload instanceof List) {
 		entities = (List<Entity>) payload;
-	    } 
+	    }
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
-	
+
+	if (uri.contains("$format=json")) {	
+	    event.getMessage().setOutboundProperty("Content-Type", "application/json");
+	} else {
+	    event.getMessage().setOutboundProperty("Content-Type", "application/xml");
+	}
+
 	return entities;
     }
 }

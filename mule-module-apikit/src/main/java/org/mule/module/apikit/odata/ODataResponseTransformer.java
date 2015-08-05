@@ -34,35 +34,51 @@ import com.google.gson.JsonSyntaxException;
 
 public class ODataResponseTransformer {
 
-	public static MuleEvent transform(MuleEvent event, ODataPayload payload) throws Exception {
-		if (!payload.getContent().isEmpty()) {
-			event.getMessage().setPayload(payload.getContent());
-		} else {
-			String url = "bla";
-			String format = "json";
-			String entityName = "bla";
-			String entityName2 = entityName.replaceAll("\\(.*\\)", "");
-			StringBuffer result = new StringBuffer();
-			result.append(writeOutput(payload.getEntities(), entityName2, url, format));
-			event.getMessage().setPayload(result.toString());
-		}
-
-		return event;
+    public static MuleEvent transform(MuleEvent event, ODataPayload payload)
+	    throws Exception {
+	if (!payload.getContent().isEmpty()) {
+	    event.getMessage().setPayload(payload.getContent());
+	} else {
+	    String url = "bla";
+	    
+	    String format = "xml";
+	    if (event.getMessage().getOutboundProperty("Content-Type").equals("application/json")) {
+		format = "json";
+	    }
+	    
+	    String entityName = "bla";
+	    String entityName2 = entityName.replaceAll("\\(.*\\)", "");
+	    StringBuffer result = new StringBuffer();
+	    result.append(writeOutput(payload.getEntities(), entityName2, url, format));
+	    event.getMessage().setPayload(result.toString());
 	}
 
-	private static String writeOutput(List<Entity> entities2, String entityName, String url, String format) throws JsonSyntaxException, FileNotFoundException,
-			WrongYamlFormatException, GatewayMetadataFileNotFoundException, GatewayMetadataResourceNotFound, GatewayMetadataMissingFieldsException, IOException,
-			JSONException {
-		StringWriter sw = new StringWriter();
-		FormatWriter<EntitiesResponse> fw = FormatWriterFactory.getFormatWriter(EntitiesResponse.class, Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
-				format, null);
-
-		GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
-		EntitySet entitySet = gwMetadataManager.getEntitySet();
-		EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(entities2, entityName, entitySet);
-
-		UriInfo uriInfo = new UriInfoImpl(url);
-		fw.write(uriInfo, sw, entitiesResponse);
-		return sw.toString();
+	if (event.getMessage().getOutboundProperty("http.status") == null) {
+	    event.getMessage().setOutboundProperty("http.status", 200);
 	}
+
+	return event;
+    }
+
+    private static String writeOutput(List<Entity> entities2,
+	    String entityName, String url, String format)
+	    throws JsonSyntaxException, FileNotFoundException,
+	    WrongYamlFormatException, GatewayMetadataFileNotFoundException,
+	    GatewayMetadataResourceNotFound,
+	    GatewayMetadataMissingFieldsException, IOException, JSONException {
+	StringWriter sw = new StringWriter();
+	FormatWriter<EntitiesResponse> fw = FormatWriterFactory
+		.getFormatWriter(EntitiesResponse.class,
+			Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
+			format, null);
+
+	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
+	EntitySet entitySet = gwMetadataManager.getEntitySet();
+	EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
+		entities2, entityName, entitySet);
+
+	UriInfo uriInfo = new UriInfoImpl(url);
+	fw.write(uriInfo, sw, entitiesResponse);
+	return sw.toString();
+    }
 }

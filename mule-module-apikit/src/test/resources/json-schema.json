@@ -1,0 +1,82 @@
+{
+  "schemas": [
+    {
+      "orders": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "name": "orders",
+        "remoteEntity": "Orders",
+        "hasPrimaryKey": true,
+        "properties": {
+          "OrderID": {
+            "sample": "10248",
+            "type": "integer",
+            "length": "11",
+            "description": "",
+            "key": true,
+            "nullable": false
+          },
+          "ShipName": {
+            "sample": "",
+            "type": "string",
+            "length": "40",
+            "description": "",
+            "key": false,
+            "nullable": true
+          },
+          "ShipAddress": {
+            "sample": "60",
+            "type": "string",
+            "length": "60",
+            "description": "",
+            "key": false,
+            "nullable": true
+          }
+        }
+      }
+    },
+    {
+      "customers": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "name": "customers",
+        "remoteEntity": "Customers",
+        "hasPrimaryKey": true,
+        "properties": {
+          "CustomerID": {
+            "sample": "10248",
+            "type": "string",
+            "length": "5",
+            "description": "",
+            "key": true,
+            "nullable": false
+          },
+          "CompanyName": {
+            "sample": "",
+            "type": "string",
+            "length": "40",
+            "description": "",
+            "key": false,
+            "nullable": true
+          },
+          "ContactName": {
+            "sample": "",
+            "type": "string",
+            "length": "30",
+            "description": "",
+            "key": false,
+            "nullable": true
+          },
+          "ContactTitle": {
+            "sample": "",
+            "type": "string",
+            "length": "30",
+            "description": "",
+            "key": false,
+            "nullable": true
+          }
+        }
+      }
+    }
+  ]
+}
