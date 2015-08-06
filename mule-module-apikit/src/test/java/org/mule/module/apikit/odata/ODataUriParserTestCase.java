@@ -40,7 +40,7 @@ public class ODataUriParserTestCase {
 				"/odata.svc/user", "");
 		assertTrue(processor instanceof ODataApikitProcessor);
 		ODataApikitProcessor apikitProcessor = (ODataApikitProcessor) processor;
-		assertEquals("/user", apikitProcessor.getUri());
+		assertEquals("/user", apikitProcessor.getPath());
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class ODataUriParserTestCase {
 				"/odata.svc/user(1)", "");
 		assertTrue(processor instanceof ODataApikitProcessor);
 		ODataApikitProcessor apikitProcessor = (ODataApikitProcessor) processor;
-		assertEquals("/user/1", apikitProcessor.getUri());
+		assertEquals("/user/1", apikitProcessor.getPath());
 	}
 
 	@Test
@@ -60,7 +60,8 @@ public class ODataUriParserTestCase {
 				"/odata.svc/user", "$skip=1&$top=10");
 		assertTrue(processor instanceof ODataApikitProcessor);
 		ODataApikitProcessor apikitProcessor = (ODataApikitProcessor) processor;
-		assertEquals("/user?skip=1&top=10", apikitProcessor.getUri());
+		assertEquals("/user", apikitProcessor.getPath());
+		assertEquals("skip=1&top=10", apikitProcessor.getQuery());
 	}
 
 	@Test

@@ -7,58 +7,118 @@
 package org.mule.module.apikit.odata.processor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mule.api.MuleEvent;
+import org.mule.api.transport.PropertyScope;
 import org.mule.module.apikit.AbstractRouter;
 import org.mule.module.apikit.odata.ODataPayload;
 import org.mule.module.apikit.odata.model.Entity;
 
 public class ODataApikitProcessor extends ODataRequestProcessor {
 
-    private String uri;
+	private String path;
+	private String query;
 
-    public ODataApikitProcessor(String uri) {
-	super();
-	this.uri = uri;
-    }
-
-    @Override
-    public ODataPayload process(MuleEvent event, AbstractRouter router)
-	    throws Exception {
-	return new ODataPayload(processEntityRequest(event, router));
-    }
-
-    public String getUri() {
-	return uri;
-    }
-
-    public void setUri(String uri) {
-	this.uri = uri;
-    }
-
-    public List<Entity> processEntityRequest(MuleEvent event, AbstractRouter router) {
-	List<Entity> entities = new ArrayList<Entity>();
-
-	try {
-	    final StringBuffer result = new StringBuffer();
-
-	    MuleEvent response = router.process(event);
-	    Object payload = response.getMessage().getPayload();
-
-	    if (payload instanceof List) {
-		entities = (List<Entity>) payload;
-	    }
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
+	public ODataApikitProcessor(String path, String query) {
+		super();
+		this.path = path;
+		this.query = query;
 	}
 
-	if (uri.contains("$format=json")) {	
-	    event.getMessage().setOutboundProperty("Content-Type", "application/json");
-	} else {
-	    event.getMessage().setOutboundProperty("Content-Type", "application/xml");
+	@Override
+	public ODataPayload process(MuleEvent event, AbstractRouter router)
+			throws Exception {
+		return new ODataPayload(processEntityRequest(event, router));
 	}
 
-	return entities;
-    }
+	public List<Entity> processEntityRequest(MuleEvent event, AbstractRouter router) {
+		List<Entity> entities = new ArrayList<Entity>();
+
+		try {
+			final StringBuffer result = new StringBuffer();
+
+			String httpRequest = event.getMessage().getInboundProperty("http.context.path") + this.path + "?" + this.query;
+			String httpRequestPath = event.getMessage().getInboundProperty("http.context.path") + this.path;
+			String httpQueryString = this.query;
+			Map<String, String> httpQueryParams = queryToMap(query);
+			
+			event.getMessage().setProperty("http.request", httpRequest, PropertyScope.INBOUND);
+			event.getMessage().setProperty("http.request.path", httpRequestPath, PropertyScope.INBOUND);
+			event.getMessage().setProperty("http.query.string", httpQueryString, PropertyScope.INBOUND);
+			event.getMessage().setProperty("http.query.params", httpQueryParams, PropertyScope.INBOUND);
+
+			MuleEvent response = router.process(event);
+			Object payload = response.getMessage().getPayload();
+
+			if (payload instanceof String) {
+				entities = getEntityList(payload);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		if (query.contains("format=json")) {
+			event.getMessage().setOutboundProperty("Content-Type", "application/json");
+		} else {
+			event.getMessage().setOutboundProperty("Content-Type", "application/xml");
+		}
+
+		return entities;
+	}
+
+	private Map<String, String> queryToMap(String query) {
+		Map<String, String> queryMap = new HashMap<String, String>();
+		
+		String[] queries = query.split("&");
+		for (String q : queries) {
+			String[] parts = q.split("=");
+			queryMap.put(parts[0], parts[1]);
+		}
+		
+		return queryMap;		
+	}
+	
+	private List<Entity> getEntityList(Object payload) throws JSONException {
+
+		List<Entity> entities = new ArrayList<Entity>();
+
+		JSONObject response = new JSONObject(payload.toString());
+		JSONArray objects = response.getJSONArray("entities");
+
+		for (int i = 0; i < objects.length(); i++) {
+			JSONObject j = objects.optJSONObject(i);
+			Iterator it = j.keys();
+			Entity e = new Entity();
+			while (it.hasNext()) {
+				String n = it.next().toString();
+				e.addProperty(n, j.getString(n));
+			}
+			entities.add(e);
+		}
+
+		return entities;
+	}
+	
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
+	}
 }

@@ -36,17 +36,17 @@ public class ODataResponseTransformer {
 
     public static MuleEvent transform(MuleEvent event, ODataPayload payload)
 	    throws Exception {
-	if (!payload.getContent().isEmpty()) {
+	if (payload.getContent() != null) {
 	    event.getMessage().setPayload(payload.getContent());
 	} else {
-	    String url = "bla";
+	    String url = "http://localhost/";
 	    
-	    String format = "xml";
+	    String format = "atom";
 	    if (event.getMessage().getOutboundProperty("Content-Type").equals("application/json")) {
-		format = "json";
+	    	format = "json";
 	    }
 	    
-	    String entityName = "bla";
+	    String entityName = "orders";
 	    String entityName2 = entityName.replaceAll("\\(.*\\)", "");
 	    StringBuffer result = new StringBuffer();
 	    result.append(writeOutput(payload.getEntities(), entityName2, url, format));
