@@ -6,12 +6,27 @@
  */
 package org.mule.module.apikit.odata.processor;
 
+import org.json.JSONException;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.AbstractRouter;
 import org.mule.module.apikit.odata.ODataPayload;
+import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
+import org.mule.module.apikit.odata.util.Helper;
+import org.raml.model.Raml;
 
 public abstract class ODataRequestProcessor {
 
+	private Raml raml;
+	
+	public ODataRequestProcessor(Raml raml) {
+		this.raml = raml;
+	}
+	
     public abstract ODataPayload process (MuleEvent event, AbstractRouter router) throws Exception;
     
+    protected GatewayMetadataManager  getMetadataManager() throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
+    	return Helper.getMetadataManager(raml);
+    }
 }

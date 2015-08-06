@@ -20,14 +20,15 @@ import org.mule.api.transport.PropertyScope;
 import org.mule.module.apikit.AbstractRouter;
 import org.mule.module.apikit.odata.ODataPayload;
 import org.mule.module.apikit.odata.model.Entity;
+import org.raml.model.Raml;
 
 public class ODataApikitProcessor extends ODataRequestProcessor {
 
 	private String path;
 	private String query;
 
-	public ODataApikitProcessor(String path, String query) {
-		super();
+	public ODataApikitProcessor(Raml raml, String path, String query) {
+		super(raml);
 		this.path = path;
 		this.query = query;
 	}

@@ -23,9 +23,14 @@ import org.mule.module.apikit.odata.util.UriInfoImpl;
 import org.odata4j.edm.EdmDataServices;
 import org.odata4j.format.FormatWriter;
 import org.odata4j.format.FormatWriterFactory;
+import org.raml.model.Raml;
 
 public class ODataServiceDocumentProcessor extends ODataRequestProcessor {
 
+	public ODataServiceDocumentProcessor(Raml raml) {
+		super(raml);
+	}
+	
     @Override
     public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
 	
@@ -51,7 +56,7 @@ public class ODataServiceDocumentProcessor extends ODataRequestProcessor {
 		EdmDataServices.class,
 		Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)), format,
 		null);
-	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
+	GatewayMetadataManager gwMetadataManager = getMetadataManager();
 	EdmDataServices ees = Helper.createMetadata(gwMetadataManager
 		.getEntitySet());
 	UriInfo uriInfo = new UriInfoImpl(url);
