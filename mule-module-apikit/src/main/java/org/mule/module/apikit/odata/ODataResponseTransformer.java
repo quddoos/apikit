@@ -28,12 +28,13 @@ import org.mule.module.apikit.odata.util.UriInfoImpl;
 import org.odata4j.format.FormatWriter;
 import org.odata4j.format.FormatWriterFactory;
 import org.odata4j.producer.EntitiesResponse;
+import org.raml.model.Raml;
 
 import com.google.gson.JsonSyntaxException;
 
 public class ODataResponseTransformer {
 
-    public static MuleEvent transform(MuleEvent event, ODataPayload payload)
+    public static MuleEvent transform(Raml raml, MuleEvent event, ODataPayload payload)
 	    throws Exception {
 	if (payload.getContent() != null) {
 	    event.getMessage().setPayload(payload.getContent());
@@ -48,7 +49,7 @@ public class ODataResponseTransformer {
 	    String entityName = "orders";
 	    String entityName2 = entityName.replaceAll("\\(.*\\)", "");
 	    StringBuffer result = new StringBuffer();
-	    result.append(writeOutput(payload.getEntities(), entityName2, url, format));
+	    result.append(writeOutput(raml, payload.getEntities(), entityName2, url, format));
 	    event.getMessage().setPayload(result.toString());
 	}
 
@@ -59,8 +60,7 @@ public class ODataResponseTransformer {
 	return event;
     }
 
-    private static String writeOutput(List<Entity> entities2,
-	    String entityName, String url, String format)
+    private static String writeOutput(Raml raml, List<Entity> entities2, String entityName, String url, String format)
 	    throws JsonSyntaxException, FileNotFoundException, IOException, JSONException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataNotInitializedException {
 	StringWriter sw = new StringWriter();
 	FormatWriter<EntitiesResponse> fw = FormatWriterFactory
@@ -68,7 +68,7 @@ public class ODataResponseTransformer {
 			Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
 			format, null);
 
-	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
+	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager(raml);
 	EntityDefinitionSet entitySet = gwMetadataManager.getEntitySet();
 	EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
 		entities2, entityName, entitySet);

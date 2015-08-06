@@ -23,11 +23,16 @@ import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNo
 import org.mule.module.apikit.odata.util.Helper;
 import org.odata4j.edm.EdmDataServices;
 import org.odata4j.format.xml.EdmxFormatWriter;
+import org.raml.model.Raml;
 
 import com.google.gson.JsonSyntaxException;
 
 public class ODataMetadataProcessor extends ODataRequestProcessor {
 
+	public ODataMetadataProcessor(Raml raml) {
+		super(raml);
+	}
+	
     @Override
     public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
 	event.getMessage().setOutboundProperty("Content-Type", "application/xml");
@@ -39,7 +44,7 @@ public class ODataMetadataProcessor extends ODataRequestProcessor {
 	    GatewayMetadataMissingFieldsException, JsonSyntaxException,
 	    FileNotFoundException, IOException, JSONException, GatewayMetadataNotInitializedException {
 	Writer w = new StringWriter();
-	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager();
+	GatewayMetadataManager gwMetadataManager = getMetadataManager();
 	EdmDataServices ees = Helper.createMetadata(gwMetadataManager
 		.getEntitySet());
 	EdmxFormatWriter.write(ees, w);

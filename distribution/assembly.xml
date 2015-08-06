@@ -22,6 +22,10 @@
                 <include>org.mozilla:rhino</include>
                 <include>commons-validator:commons-validator</include>
                 <include>commons-digester:commons-digester</include>
+                <include>org.apache.cxf:cxf-rt-frontend-jaxrs</include>
+                <include>org.jboss.oreva:odata-core</include>
+                <include>commons-lang:commons-lang</include>
+                <include>com.google.code.gson:gson</include>
             </includes>
         </dependencySet>
     </dependencySets>

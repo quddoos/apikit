@@ -16,6 +16,7 @@ import org.mule.module.apikit.odata.processor.ODataApikitProcessor;
 import org.mule.module.apikit.odata.processor.ODataMetadataProcessor;
 import org.mule.module.apikit.odata.processor.ODataRequestProcessor;
 import org.mule.module.apikit.odata.processor.ODataServiceDocumentProcessor;
+import org.raml.model.Raml;
 
 public class ODataUriParser {
 
@@ -32,7 +33,7 @@ public class ODataUriParser {
 	 * @return
 	 * @throws ODataInvalidQueryRequestException
 	 */
-	public static ODataRequestProcessor parse(String path, String query)
+	public static ODataRequestProcessor parse(Raml raml, String path, String query)
 			throws ODataInvalidQueryRequestException {
 
 		path = path.replace(ODATA_SVC_URI_PREFIX, "");
@@ -45,7 +46,7 @@ public class ODataUriParser {
 		// metadata
 		if (path.contains("/$metadata")) {
 			if (path.equals("/$metadata") && query.isEmpty()) {
-				return new ODataMetadataProcessor();
+				return new ODataMetadataProcessor(raml);
 			}
 			throw new ODataInvalidQueryRequestException();
 		}
@@ -53,7 +54,7 @@ public class ODataUriParser {
 		// service document
 		if (path.isEmpty() || path.equals("/")) {
 			if (query.isEmpty() || query.startsWith("$format=")) {
-				return new ODataServiceDocumentProcessor();
+				return new ODataServiceDocumentProcessor(raml);
 			}
 			throw new ODataInvalidQueryRequestException();
 		}
@@ -78,7 +79,7 @@ public class ODataUriParser {
 			// build path
 			String apiPath = "/" + m.group(1) + id;
 
-			return new ODataApikitProcessor(apiPath, querystring);
+			return new ODataApikitProcessor(raml, apiPath, querystring);
 		} else {
 			String pattern = "^/([a-zA-Z0-9]+)/";
 			Pattern r = Pattern.compile(pattern);
