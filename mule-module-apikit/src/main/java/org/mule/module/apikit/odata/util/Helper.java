@@ -1,10 +1,12 @@
 package org.mule.module.apikit.odata.util;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
@@ -29,6 +31,8 @@ import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.edm.EdmType;
 import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.Responses;
+import org.raml.model.Raml;
+import org.raml.parser.visitor.RamlDocumentBuilder;
 
 public class Helper {
 
@@ -113,25 +117,38 @@ public class Helper {
 
 		return EdmSimpleType.STRING;
 	}
-
-	public static GatewayMetadataManager initializeMetadataManager(String path) throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
-		gwMetadataManager.refreshMetadata(path);
+	
+	public static GatewayMetadataManager refreshMetadataManager(Raml raml) throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException{
+		gwMetadataManager.refreshMetadata(raml);
 		return gwMetadataManager;
 	}
-	
-	public static GatewayMetadataManager initializeMetadataManager(InputStream inputStream) throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
-		gwMetadataManager.refreshMetadata(inputStream);
-		return gwMetadataManager;
+
+	public static GatewayMetadataManager refreshMetadataManager(String path)
+			throws GatewayMetadataMissingFieldsException,
+			GatewayMetadataResourceNotFound, JSONException {
+		return refreshMetadataManager(getRaml(path));
+	}
+
+	public static GatewayMetadataManager refreshMetadataManager(URL url)
+			throws GatewayMetadataMissingFieldsException,
+			GatewayMetadataResourceNotFound, JSONException {
+		return refreshMetadataManager(getRaml(url));
 	}
 
 	public static GatewayMetadataManager getMetadataManager()
 			throws GatewayMetadataMissingFieldsException,
 			GatewayMetadataResourceNotFound, JSONException {
-		if (!gwMetadataManager.isInitialized()) {
-			// TODO
-			gwMetadataManager.refreshMetadata("org/mule/module/apikit/odata/odata.raml");
-		}
+
 		return gwMetadataManager;
+	}
+
+	private static Raml getRaml(URL url) {
+		throw new NotImplementedException();
+	}
+
+	private static Raml getRaml(String path) {
+		Raml raml = new RamlDocumentBuilder().build(path);
+		return raml;
 	}
 
 }
