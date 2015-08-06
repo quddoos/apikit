@@ -76,9 +76,9 @@ public class ODataUriParser {
 			querystring = handleQuerystring(query, querystring);
 
 			// build path
-			String apikitFriendlyUri = "/" + m.group(1) + id + querystring;
+			String apiPath = "/" + m.group(1) + id;
 
-			return new ODataApikitProcessor(apikitFriendlyUri);
+			return new ODataApikitProcessor(apiPath, querystring);
 		} else {
 			String pattern = "^/([a-zA-Z0-9]+)/";
 			Pattern r = Pattern.compile(pattern);
@@ -99,7 +99,7 @@ public class ODataUriParser {
 			String[] queryParams = query.replace("?", "").split("&");
 			for (String queryParam : queryParams) {
 				String[] elems = queryParam.split("=");
-				if (elems.length == 2 || !validQueryParam(elems[0])) {
+				if (elems.length == 2 && !validQueryParam(elems[0])) {
 					throw new ODataInvalidQueryRequestException(
 							"The query parameter '"
 									+ elems[0]

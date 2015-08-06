@@ -124,32 +124,48 @@ schemas:
   get: 
     description: Read
     is: [orderby, top, skip, filter, expand, format, select, inlinecount]
-  delete: 
-    description: Delete
+    responses:
+      200:
+        body:
+          application/json: ~
+          application/xml: ~
   post: 
-    description: Create
+    description: Create    
   /{id}: 
     get: 
       description: Read
       is: [orderby, top, skip, filter, expand, format, select, inlinecount]
+      responses:
+        200:
+          body:
+            application/json: ~
+            application/xml: ~
     delete: 
-      description: Delete
+      description: Delete      
     put: 
-      description: Update
+      description: Update      
 
 /customers: 
   get: 
     description: Read
     is: [orderby, top, skip, filter, expand, format, select, inlinecount]
-  delete: 
-    description: Delete
+    responses:
+      200:
+        body:
+          application/json: ~
+          application/xml: ~    
   post: 
-    description: Create
+    description: Create    
   /{id}: 
     get: 
       description: Read
       is: [orderby, top, skip, filter, expand, format, select, inlinecount]
+      responses:
+        200:
+          body:
+            application/json: ~
+            application/xml: ~             
     delete: 
-      description: Delete
+      description: Delete      
     put: 
       description: Update

@@ -47,9 +47,14 @@ public class SimpleEntityTestCase extends FunctionalTestCase
     public void getUsersPositive() throws Exception
     {
         given().header("Accept", "application/json")
+        .expect()
+            .header("Content-type", "application/json").statusCode(200)
+        .when().get("api/orders?$format=json");
+    	
+    	given().header("Accept", "application/json")
             .expect()
-                .response().body("d.results.orderID", hasItems(10248, 10249))
+                .response().body("d.results.OrderID", hasItems("10248", "10249"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/odata.svc/orders?$format=json");
+            .when().get("api/odata.svc/orders?$format=json");
     }
 }
