@@ -48,13 +48,13 @@ schemas:
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "name": "orders",
-        "remoteEntity": "Orders",
+        "remoteName": "Orders",
         "hasPrimaryKey": true,
         "properties": {
           "OrderID": {
             "sample": "10248",
             "type": "integer",
-            "length": "11",
+            "maxLength": "11",
             "description": "",
             "key": true,
             "nullable": false
@@ -62,7 +62,7 @@ schemas:
           "ShipName": {
             "sample": "",
             "type": "string",
-            "length": "40",
+            "maxLength": "40",
             "description": "",
             "key": false,
             "nullable": true
@@ -70,7 +70,7 @@ schemas:
           "ShipAddress": {
             "sample": "60",
             "type": "string",
-            "length": "60",
+            "maxLength": "60",
             "description": "",
             "key": false,
             "nullable": true
@@ -82,13 +82,13 @@ schemas:
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "name": "customers",
-        "remoteEntity": "Customers",
+        "remoteName": "Customers",
         "hasPrimaryKey": true,
         "properties": {
           "CustomerID": {
             "sample": "10248",
             "type": "string",
-            "length": "5",
+            "maxLength": "5",
             "description": "",
             "key": true,
             "nullable": false
@@ -96,7 +96,7 @@ schemas:
           "CompanyName": {
             "sample": "",
             "type": "string",
-            "length": "40",
+            "maxLength": "40",
             "description": "",
             "key": false,
             "nullable": true
@@ -104,7 +104,7 @@ schemas:
           "ContactName": {
             "sample": "",
             "type": "string",
-            "length": "30",
+            "maxLength": "30",
             "description": "",
             "key": false,
             "nullable": true
@@ -112,7 +112,7 @@ schemas:
           "ContactTitle": {
             "sample": "",
             "type": "string",
-            "length": "30",
+            "maxLength": "30",
             "description": "",
             "key": false,
             "nullable": true

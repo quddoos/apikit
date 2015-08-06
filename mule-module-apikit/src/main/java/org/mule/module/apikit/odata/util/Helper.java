@@ -1,5 +1,6 @@
 package org.mule.module.apikit.odata.util;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -113,11 +114,22 @@ public class Helper {
 		return EdmSimpleType.STRING;
 	}
 
+	public static GatewayMetadataManager initializeMetadataManager(String path) throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
+		gwMetadataManager.refreshMetadata(path);
+		return gwMetadataManager;
+	}
+	
+	public static GatewayMetadataManager initializeMetadataManager(InputStream inputStream) throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
+		gwMetadataManager.refreshMetadata(inputStream);
+		return gwMetadataManager;
+	}
+
 	public static GatewayMetadataManager getMetadataManager()
 			throws GatewayMetadataMissingFieldsException,
 			GatewayMetadataResourceNotFound, JSONException {
 		if (!gwMetadataManager.isInitialized()) {
-			gwMetadataManager.refreshMetadata("datagateway-definition.raml");
+			// TODO
+			gwMetadataManager.refreshMetadata("org/mule/module/apikit/odata/odata.raml");
 		}
 		return gwMetadataManager;
 	}
