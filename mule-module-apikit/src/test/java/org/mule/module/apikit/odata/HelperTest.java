@@ -1,6 +1,6 @@
 package org.mule.module.apikit.odata;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 
 import junit.framework.Assert;
@@ -22,7 +22,7 @@ public class HelperTest {
 
 	@Ignore
 	@Test
-	public void test() throws MalformedURLException, GatewayMetadataNotInitializedException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
+	public void test() throws GatewayMetadataNotInitializedException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException, IOException {
 		Assert.assertEquals(Helper.refreshMetadataManager("datagateway-definition.raml").getEntitySet(), Helper.refreshMetadataManager(new URL("http://localhost:8081/api/config")).getEntitySet());
 	}
 }

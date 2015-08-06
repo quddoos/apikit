@@ -2,6 +2,7 @@ package org.mule.module.apikit.odata.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
@@ -136,7 +136,7 @@ public class Helper {
 
 	public static GatewayMetadataManager refreshMetadataManager(URL url)
 			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException {
+			GatewayMetadataResourceNotFound, JSONException, IOException {
 		return refreshMetadataManager(getRaml(url));
 	}
 
@@ -147,19 +147,14 @@ public class Helper {
 		return gwMetadataManager;
 	}
 
-	private static Raml getRaml(URL url) {
+	private static Raml getRaml(URL url) throws IOException {
 		HttpURLConnection conn;
 		Raml raml = null;
-		try {
-			conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			raml = new RamlDocumentBuilder().build(new InputStreamReader(
-					conn.getInputStream()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		InputStreamReader input = new InputStreamReader(conn
+				.getInputStream());
+		raml = new RamlDocumentBuilder().build(input);
 
 		return raml;
 	}
