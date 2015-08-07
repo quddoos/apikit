@@ -59,6 +59,7 @@ public class ODataApikitProcessor extends ODataRequestProcessor {
 			event.getMessage().setProperty("http.query.string", httpQueryString, PropertyScope.INBOUND);
 			event.getMessage().setProperty("http.query.params", httpQueryParams, PropertyScope.INBOUND);
 
+//Remove this poor's man debuger!
 System.out.println(httpRequest);
 System.out.println(httpRequestPath);
 System.out.println(httpQueryString);

@@ -319,7 +319,9 @@ public abstract class AbstractRouter extends
 			return ODataResponseTransformer.transform(config.api, event, odataPayload);
 
 		} catch (Exception ex) {
+			//Remove this poor's man debuger!	
 			ex.printStackTrace();
+			
 			event.getMessage().setOutboundProperty("Content-Type", "application/xml");
 			event.getMessage().setPayload(ODataErrorHandler.handle(ex));
 			return event;
