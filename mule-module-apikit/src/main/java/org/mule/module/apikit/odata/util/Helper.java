@@ -50,23 +50,26 @@ public class Helper {
 	public static EntitiesResponse convertEntitiesToOEntities(
 			List<Entity> outputEntities, String entitySetName,
 			EntityDefinitionSet metadata1) {
-		EdmEntitySet ees = Helper.createMetadata(metadata1).getEdmEntitySet(
-				entitySetName);
+
+		EdmEntitySet ees = Helper.createMetadata(metadata1).getEdmEntitySet(entitySetName);
 		List<OEntity> entities = new ArrayList<OEntity>();
 		List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
-		int id = 0;
+
 		for (Entity outputEntity : outputEntities) {
+			String key = "";
+			String delim = "";
+						
 			properties = new ArrayList<OProperty<?>>();
-
-			for (Entry<String, Object> entry : outputEntity.getProperties()
-					.entrySet()) {
-
-				properties.add(OProperties.string(entry.getKey(),
-						entry.getValue() + ""));
+			
+			for (Entry<String, Object> entry : outputEntity.getProperties().entrySet()) {
+				properties.add(OProperties.string(entry.getKey(), entry.getValue() + ""));
+				if (ees.getType().getKeys().contains(entry.getKey())){
+					key += delim + entry.getValue();
+					delim = ",";
+				}
 			}
-			entities.add(OEntities.create(ees, OEntityKey.create(id + ""),
-					properties, null));
-			id++;
+			entities.add(OEntities.create(ees, OEntityKey.create(key), properties, null));
+
 		}
 
 		return Responses.entities(entities, ees, null, null);
@@ -82,6 +85,10 @@ public class Helper {
 			List<EdmEntitySet.Builder> entitySets = new ArrayList<EdmEntitySet.Builder>();
 
 			for (EntityDefinition entityMetadata : metadata.toList()) {
+				
+				String keys = "";
+				String delim = "";
+				
 				for (EntityDefinitionProperty propertyMetadata : entityMetadata
 						.getProperties()) {
 					Builder builder = EdmProperty.newBuilder(
@@ -89,12 +96,16 @@ public class Helper {
 							convertType(propertyMetadata.getType()));
 					builder.setNullable(propertyMetadata.isNullable());
 					properties.add(builder);
+					if (propertyMetadata.isKey()) {
+						keys += delim + propertyMetadata.getName();
+						delim = ",";
+					}
 				}
 
 				String entityName = entityMetadata.getName();
 				EdmEntityType.Builder type = EdmEntityType.newBuilder()
 						.setNamespace(namespace).setName(entityName)
-						.addKeys("id").addProperties(properties);
+						.addKeys(keys).addProperties(properties);
 				entityTypes.add(type);
 
 				entitySets.add(EdmEntitySet.newBuilder().setName(entityName)
@@ -123,7 +134,9 @@ public class Helper {
 			return EdmSimpleType.STRING;
 		if (type.equals("int"))
 			return EdmSimpleType.INT64;
-
+		if (type.equals("integer"))
+			return EdmSimpleType.INT32;
+		
 		return EdmSimpleType.STRING;
 	}
 

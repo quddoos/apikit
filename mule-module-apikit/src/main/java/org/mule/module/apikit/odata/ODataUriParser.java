@@ -60,8 +60,8 @@ public class ODataUriParser {
 		}
 
 		// entity(s) request
-		if (path.matches("^/[a-zA-Z0-9]+\\(*[a-zA-Z0-9]*\\)*$")) {
-			String pattern = "^/([a-zA-Z0-9]+)\\(*([a-zA-Z0-9]*)\\)*$";
+		if (path.matches("^/[a-zA-Z0-9]+\\(*'?[a-zA-Z0-9]*'?\\)*$")) {
+			String pattern = "^/([a-zA-Z0-9]+)\\(*'?([a-zA-Z0-9]*)'?\\)*$";
 			Pattern r = Pattern.compile(pattern);
 			Matcher m = r.matcher(path);
 

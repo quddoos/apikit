@@ -36,45 +36,49 @@ public class ODataResponseTransformer {
 
     public static MuleEvent transform(Raml raml, MuleEvent event, ODataPayload payload)
 	    throws Exception {
-	if (payload.getContent() != null) {
-	    event.getMessage().setPayload(payload.getContent());
-	} else {
-	    String url = "http://localhost/";
-	    
-	    String format = "atom";
-	    if (event.getMessage().getOutboundProperty("Content-Type").equals("application/json")) {
-	    	format = "json";
-	    }
-	    
-	    String entityName = "orders";
-	    String entityName2 = entityName.replaceAll("\\(.*\\)", "");
-	    StringBuffer result = new StringBuffer();
-	    result.append(writeOutput(raml, payload.getEntities(), entityName2, url, format));
-	    event.getMessage().setPayload(result.toString());
-	}
+		if (payload.getContent() != null) {
+			event.getMessage().setPayload(payload.getContent());
+		} else {
+			String url = "http://localhost/";
 
-	if (event.getMessage().getOutboundProperty("http.status") == null) {
-	    event.getMessage().setOutboundProperty("http.status", 200);
-	}
+			String format = "atom";
+			if (event.getMessage().getOutboundProperty("Content-Type")
+					.equals("application/json")) {
+				format = "json";
+			}
 
-	return event;
+			String entityName = "orders";
+			String entityName2 = entityName.replaceAll("\\(.*\\)", "");
+			StringBuffer result = new StringBuffer();
+			result.append(writeOutput(raml, payload.getEntities(), entityName2,
+					url, format));
+			event.getMessage().setPayload(result.toString());
+		}
+
+		if (event.getMessage().getOutboundProperty("http.status") == null) {
+			event.getMessage().setOutboundProperty("http.status", 200);
+		}
+
+		return event;
     }
 
     private static String writeOutput(Raml raml, List<Entity> entities2, String entityName, String url, String format)
 	    throws JsonSyntaxException, FileNotFoundException, IOException, JSONException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataNotInitializedException {
-	StringWriter sw = new StringWriter();
-	FormatWriter<EntitiesResponse> fw = FormatWriterFactory
-		.getFormatWriter(EntitiesResponse.class,
-			Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
-			format, null);
+		StringWriter sw = new StringWriter();
+		FormatWriter<EntitiesResponse> fw = FormatWriterFactory
+				.getFormatWriter(EntitiesResponse.class,
+						Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
+						format, null);
 
-	GatewayMetadataManager gwMetadataManager = Helper.refreshMetadataManager(raml);
-	EntityDefinitionSet entitySet = gwMetadataManager.getEntitySet();
-	EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
-		entities2, entityName, entitySet);
+		GatewayMetadataManager gwMetadataManager = Helper
+				.refreshMetadataManager(raml);
+		EntityDefinitionSet entitySet = gwMetadataManager.getEntitySet();
+		
+		EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
+				entities2, entityName, entitySet);
 
-	UriInfo uriInfo = new UriInfoImpl(url);
-	fw.write(uriInfo, sw, entitiesResponse);
-	return sw.toString();
+		UriInfo uriInfo = new UriInfoImpl(url);
+		fw.write(uriInfo, sw, entitiesResponse);
+		return sw.toString();
     }
 }
