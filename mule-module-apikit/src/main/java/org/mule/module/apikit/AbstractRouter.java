@@ -319,9 +319,10 @@ public abstract class AbstractRouter extends
 			return ODataResponseTransformer.transform(config.api, event, odataPayload);
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			event.getMessage().setOutboundProperty("Content-Type", "application/xml");
-			ODataErrorHandler.handle(ex);
-			throw new MuleRuntimeException(ex);
+			event.getMessage().setPayload(ODataErrorHandler.handle(ex));
+			return event;
 		}
 	}
 

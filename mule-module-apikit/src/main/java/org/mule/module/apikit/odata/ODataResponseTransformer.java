@@ -68,7 +68,7 @@ public class ODataResponseTransformer {
 			Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
 			format, null);
 
-	GatewayMetadataManager gwMetadataManager = Helper.getMetadataManager(raml);
+	GatewayMetadataManager gwMetadataManager = Helper.refreshMetadataManager(raml);
 	EntityDefinitionSet entitySet = gwMetadataManager.getEntitySet();
 	EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
 		entities2, entityName, entitySet);

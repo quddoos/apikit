@@ -32,22 +32,23 @@ public class ODataMetadataProcessor extends ODataRequestProcessor {
 	public ODataMetadataProcessor(Raml raml) {
 		super(raml);
 	}
-	
-    @Override
-    public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
-	event.getMessage().setOutboundProperty("Content-Type", "application/xml");
-	return new ODataPayload(createMetadataOutput());
-    }
 
-    private String createMetadataOutput() throws URISyntaxException,
-	    GatewayMetadataResourceNotFound,
-	    GatewayMetadataMissingFieldsException, JsonSyntaxException,
-	    FileNotFoundException, IOException, JSONException, GatewayMetadataNotInitializedException {
-	Writer w = new StringWriter();
-	GatewayMetadataManager gwMetadataManager = getMetadataManager();
-	EdmDataServices ees = Helper.createMetadata(gwMetadataManager
-		.getEntitySet());
-	EdmxFormatWriter.write(ees, w);
-	return w.toString();
-    }
+	@Override
+	public ODataPayload process(MuleEvent event, AbstractRouter router) throws Exception {
+		event.getMessage().setOutboundProperty("Content-Type", "application/xml");
+		return new ODataPayload(createMetadataOutput());
+	}
+
+	private String createMetadataOutput() throws URISyntaxException,
+			GatewayMetadataResourceNotFound,
+			GatewayMetadataMissingFieldsException, JsonSyntaxException,
+			FileNotFoundException, IOException, JSONException,
+			GatewayMetadataNotInitializedException {
+		Writer w = new StringWriter();
+		GatewayMetadataManager gwMetadataManager = getMetadataManager();
+		EdmDataServices ees = Helper.createMetadata(gwMetadataManager
+				.getEntitySet());
+		EdmxFormatWriter.write(ees, w);
+		return w.toString();
+	}
 }
