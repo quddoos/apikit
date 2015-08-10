@@ -565,4 +565,11 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         }
         return actionRefs;
     }
+    
+    public Raml getFreshRaml() {
+        ResourceLoader loader = getRamlResourceLoader();
+        validateRaml(loader);
+        RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);   	
+    	return builder.build(raml);
+    }
 }

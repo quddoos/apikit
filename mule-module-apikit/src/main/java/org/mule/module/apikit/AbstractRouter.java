@@ -312,11 +312,11 @@ public abstract class AbstractRouter extends
 		String query = event.getMessage().getInboundProperty("http.query.string");
 
 		try {
-			ODataRequestProcessor odataRequestProcessor = ODataUriParser.parse(config.api, path, query);
+			ODataRequestProcessor odataRequestProcessor = ODataUriParser.parse(config.getFreshRaml(), path, query);
 
 			ODataPayload odataPayload = odataRequestProcessor.process(event, this);
 
-			return ODataResponseTransformer.transform(config.api, event, odataPayload);
+			return ODataResponseTransformer.transform(config.getFreshRaml(), event, odataPayload);
 
 		} catch (Exception ex) {
 			//Remove this poor's man debuger!	
