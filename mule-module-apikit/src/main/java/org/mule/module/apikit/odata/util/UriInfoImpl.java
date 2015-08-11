@@ -6,9 +6,7 @@
  */
 package org.mule.module.apikit.odata.util;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,14 +32,12 @@ import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 
 public class UriInfoImpl implements UriInfo {
 	private static final Logger LOG = LogUtils.getL7dLogger(UriInfoImpl.class);
-	private static final String CASE_INSENSITIVE_QUERIES = "org.apache.cxf.http.case_insensitive_queries";
 
 	private MultivaluedMap<String, String> templateParams;
 	private OperationResourceInfoStack stack;
 	private boolean caseInsensitiveQueries;
 	private String url;
 
-	@SuppressWarnings("unchecked")
 	public UriInfoImpl(String url) {
 		this.url = url;
 		// this( (MultivaluedMap<String, String>) m
@@ -49,13 +45,7 @@ public class UriInfoImpl implements UriInfo {
 	}
 
 	public UriInfoImpl(MultivaluedMap<String, String> templateParams) {
-		// this.message = m;
 		this.templateParams = templateParams;
-		// if (m != null) {
-		// this.stack = m.get(OperationResourceInfoStack.class);
-		// this.caseInsensitiveQueries = MessageUtils.isTrue(m
-		// .getContextualProperty(CASE_INSENSITIVE_QUERIES));
-		// }
 	}
 
 	public URI getAbsolutePath() {
@@ -68,8 +58,6 @@ public class UriInfoImpl implements UriInfo {
 	}
 
 	public URI getBaseUri() {
-		// URI u = URI.create(HttpUtils.getEndpointAddress(message));
-		// return HttpUtils.toAbsoluteUri(u, message);
 		try {
 			return new URL(url).toURI(); 
 		} catch (Exception e) {
@@ -122,7 +110,6 @@ public class UriInfoImpl implements UriInfo {
 	}
 
 	private String getQueryString() {
-		// return (String) message.get(Message.QUERY_STRING);
 		return "";
 	}
 

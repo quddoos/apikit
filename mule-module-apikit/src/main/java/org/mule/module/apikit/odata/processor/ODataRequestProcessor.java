@@ -27,6 +27,6 @@ public abstract class ODataRequestProcessor {
     public abstract ODataPayload process (MuleEvent event, AbstractRouter router) throws Exception;
     
     protected GatewayMetadataManager  getMetadataManager() throws GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, JSONException {
-    	return Helper.getMetadataManager(raml);
+    	return Helper.refreshMetadataManager(raml);
     }
 }
