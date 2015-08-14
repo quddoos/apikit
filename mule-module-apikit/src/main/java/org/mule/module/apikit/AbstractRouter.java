@@ -18,7 +18,6 @@ import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
-import org.mule.api.MuleRuntimeException;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.lifecycle.StartException;
 import org.mule.api.transport.ReplyToHandler;
@@ -27,11 +26,6 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.odata.ODataPayload;
-import org.mule.module.apikit.odata.ODataResponseTransformer;
-import org.mule.module.apikit.odata.ODataUriParser;
-import org.mule.module.apikit.odata.error.ODataErrorHandler;
-import org.mule.module.apikit.odata.processor.ODataRequestProcessor;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -52,8 +46,6 @@ public abstract class AbstractRouter extends
 	protected FlowConstruct flowConstruct;
 	protected AbstractConfiguration config;
 	protected RamlDescriptorHandler ramlHandler;
-
-	private static final String ODATA_SVC_URI_PREFIX = "/odata.svc";
 
 	@Override
 	public void start() throws MuleException {
@@ -77,8 +69,8 @@ public abstract class AbstractRouter extends
 	@Override
 	protected MuleEvent processBlocking(MuleEvent event) throws MuleException {
 
-		if (isODataRequest(event)) {
-			return processODataRequest(event);
+		if (ODataRequestHandler.isODataRequest(event, config)) {
+			return ODataRequestHandler.processODataRequest(event, this);
 		} else {
 			RouterRequest result = processRouterRequest(event);
 			event = result.getEvent();
@@ -289,42 +281,6 @@ public abstract class AbstractRouter extends
 
 		public Integer getSuccessStatus() {
 			return successStatus;
-		}
-	}
-
-	/**
-	 * Returns true if the path of the HTTP request starts with the OData prefix
-	 * 
-	 * @param event
-	 * @return
-	 */
-	protected boolean isODataRequest(MuleEvent event) {
-		HttpRestRequest request = getHttpRestRequest(event);
-		String path = request.getResourcePath().toLowerCase();
-
-		return path.startsWith(ODATA_SVC_URI_PREFIX);
-	}
-
-	protected MuleEvent processODataRequest(MuleEvent event) throws MuleException {
-
-		HttpRestRequest request = getHttpRestRequest(event);
-		String path = request.getResourcePath();
-		String query = event.getMessage().getInboundProperty("http.query.string");
-
-		try {
-			ODataRequestProcessor odataRequestProcessor = ODataUriParser.parse(config.getFreshRaml(), path, query);
-
-			ODataPayload odataPayload = odataRequestProcessor.process(event, this);
-
-			return ODataResponseTransformer.transform(config.getFreshRaml(), event, odataPayload);
-
-		} catch (Exception ex) {
-			//Remove this poor's man debuger!	
-			ex.printStackTrace();
-			
-			event.getMessage().setOutboundProperty("Content-Type", "application/xml");
-			event.getMessage().setPayload(ODataErrorHandler.handle(ex));
-			return event;
 		}
 	}
 

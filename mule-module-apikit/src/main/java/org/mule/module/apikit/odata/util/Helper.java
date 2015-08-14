@@ -80,11 +80,12 @@ public class Helper {
 
 			String namespace = "entities";
 
-			List<EdmProperty.Builder> properties = new ArrayList<EdmProperty.Builder>();
 			List<EdmEntityType.Builder> entityTypes = new ArrayList<EdmEntityType.Builder>();
 			List<EdmEntitySet.Builder> entitySets = new ArrayList<EdmEntitySet.Builder>();
 
 			for (EntityDefinition entityMetadata : metadata.toList()) {
+
+				List<EdmProperty.Builder> properties = new ArrayList<EdmProperty.Builder>();
 				
 				String keys = "";
 				String delim = "";
