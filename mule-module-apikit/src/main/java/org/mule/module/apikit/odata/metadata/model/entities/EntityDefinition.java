@@ -7,6 +7,7 @@
 package org.mule.module.apikit.odata.metadata.model.entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -82,6 +83,7 @@ public class EntityDefinition implements Comparable<EntityDefinition>{
 
 	public void addProperty(EntityDefinitionProperty entityProperty) {
 		this.properties.add(entityProperty);
+		Collections.sort(properties);
 	}
 
 	public String getName() {
@@ -98,6 +100,7 @@ public class EntityDefinition implements Comparable<EntityDefinition>{
 
 	public void setProperties(List<EntityDefinitionProperty> properties) {
 		this.properties = properties;
+		Collections.sort(properties);
 	}
 
 	public String getRemoteEntity() {

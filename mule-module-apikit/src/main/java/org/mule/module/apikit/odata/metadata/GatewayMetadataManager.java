@@ -10,7 +10,8 @@ import java.io.InputStream;
 
 import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataEntityNotFoundException;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFormatException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataNotInitializedException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinition;
@@ -32,21 +33,15 @@ public class GatewayMetadataManager {
 		ramlParser = new RamlParser();
 	}
 
-	public void refreshMetadata(String raml)
-			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException {
+	public void refreshMetadata(String raml) throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException{
 		entitySet = ramlParser.getEntitiesFromRaml(raml);
 	}
 
-	public void refreshMetadata(InputStream raml)
-			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException {
+	public void refreshMetadata(InputStream raml) throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException{
 		entitySet = ramlParser.getEntitiesFromRaml(raml);
 	}
 
-	public void refreshMetadata(Raml raml)
-			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException {
+	public void refreshMetadata(Raml raml) throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException{
 		entitySet = ramlParser.getEntitiesFromRaml(raml);
 	}
 
@@ -59,13 +54,16 @@ public class GatewayMetadataManager {
 	}
 
 	public EntityDefinition getEntityByName(String entityName)
-			throws GatewayMetadataEntityNotFoundException {
+			throws GatewayMetadataEntityNotFoundException, GatewayMetadataNotInitializedException {
+		if (entitySet == null) {
+			throw new GatewayMetadataNotInitializedException();
+		}
 		for (EntityDefinition EntityDefinition : entitySet.toList()) {
 			if (EntityDefinition.getName().equalsIgnoreCase(entityName)) {
 				return EntityDefinition;
 			}
 		}
-		throw new GatewayMetadataEntityNotFoundException("EntityDefinition "
+		throw new GatewayMetadataEntityNotFoundException("Entity "
 				+ entityName + " not found.");
 	}
 

@@ -18,7 +18,8 @@ import javax.ws.rs.core.UriInfo;
 import org.json.JSONException;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFormatException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataNotInitializedException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionSet;
@@ -62,8 +63,7 @@ public class ODataResponseTransformer {
 		return event;
     }
 
-    private static String writeOutput(Raml raml, List<Entity> entities2, String entityName, String url, String format)
-	    throws JsonSyntaxException, FileNotFoundException, IOException, JSONException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataNotInitializedException {
+    private static String writeOutput(Raml raml, List<Entity> entities2, String entityName, String url, String format) throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException, GatewayMetadataNotInitializedException {
 		StringWriter sw = new StringWriter();
 		FormatWriter<EntitiesResponse> fw = FormatWriterFactory
 				.getFormatWriter(EntitiesResponse.class,

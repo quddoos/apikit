@@ -17,7 +17,8 @@ import org.mule.api.MuleEvent;
 import org.mule.module.apikit.AbstractRouter;
 import org.mule.module.apikit.odata.ODataPayload;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFormatException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataNotInitializedException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.util.Helper;
@@ -41,9 +42,9 @@ public class ODataMetadataProcessor extends ODataRequestProcessor {
 
 	private String createMetadataOutput() throws URISyntaxException,
 			GatewayMetadataResourceNotFound,
-			GatewayMetadataMissingFieldsException, JsonSyntaxException,
-			FileNotFoundException, IOException, JSONException,
-			GatewayMetadataNotInitializedException {
+			GatewayMetadataFieldsException, JsonSyntaxException,
+			FileNotFoundException, IOException, 
+			GatewayMetadataNotInitializedException, GatewayMetadataFormatException {
 		Writer w = new StringWriter();
 		GatewayMetadataManager gwMetadataManager = getMetadataManager();
 		EdmDataServices ees = Helper.createMetadata(gwMetadataManager
