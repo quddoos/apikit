@@ -18,7 +18,8 @@ import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFormatException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinition;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionProperty;
@@ -141,27 +142,21 @@ public class Helper {
 		return EdmSimpleType.STRING;
 	}
 
-	public static GatewayMetadataManager refreshMetadataManager(Raml raml)
-			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException {
+	public static GatewayMetadataManager refreshMetadataManager(Raml raml) throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException{
 		gwMetadataManager.refreshMetadata(raml);
 		return gwMetadataManager;
 	}
 
-	public static GatewayMetadataManager refreshMetadataManager(String path)
-			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException {
+	public static GatewayMetadataManager refreshMetadataManager(String path)throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException{
 		return refreshMetadataManager(getRaml(path));
 	}
 
-	public static GatewayMetadataManager refreshMetadataManager(URL url)
-			throws GatewayMetadataMissingFieldsException,
-			GatewayMetadataResourceNotFound, JSONException, IOException {
+	public static GatewayMetadataManager refreshMetadataManager(URL url)throws GatewayMetadataFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataFormatException, IOException{
 		return refreshMetadataManager(getRaml(url));
 	}
 
 	public static GatewayMetadataManager getMetadataManager(Raml raml)
-			throws GatewayMetadataMissingFieldsException,
+			throws GatewayMetadataFieldsException,
 			GatewayMetadataResourceNotFound, JSONException {
 		return gwMetadataManager;
 	}

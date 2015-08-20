@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit.odata.processor;
 
-import java.net.URLDecoder;
-
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.AbstractRouter;
 import org.mule.module.apikit.odata.ODataPayload;

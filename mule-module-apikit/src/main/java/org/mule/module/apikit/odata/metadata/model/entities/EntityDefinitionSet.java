@@ -7,6 +7,7 @@
 package org.mule.module.apikit.odata.metadata.model.entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,8 +22,9 @@ public class EntityDefinitionSet {
 		entities = new ArrayList<EntityDefinition>();
 	}
 
-	public void addEntity(EntityDefinition EntityDefinition) {
-		entities.add(EntityDefinition);
+	public void addEntity(EntityDefinition entityDefinition) {
+		entities.add(entityDefinition);
+		Collections.sort(entities);
 	}
 
 	public String toString() {

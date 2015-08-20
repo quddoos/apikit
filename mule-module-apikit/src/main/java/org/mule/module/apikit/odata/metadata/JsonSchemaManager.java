@@ -15,7 +15,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
+import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataFieldsException;
 import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinition;
 import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionProperty;
@@ -43,7 +43,7 @@ public class JsonSchemaManager {
 
     public EntityDefinitionSet getEntitiesFromSchema() throws JsonSyntaxException,
 	    FileNotFoundException, IOException,
-	    GatewayMetadataMissingFieldsException,
+	    GatewayMetadataFieldsException,
 	    GatewayMetadataResourceNotFound, JSONException {
 
 	EntityDefinitionSet entitySet = new EntityDefinitionSet();
@@ -78,7 +78,7 @@ public class JsonSchemaManager {
     }
 
     private List<EntityDefinitionProperty> parseEntityProperties(JSONObject properties)
-	    throws GatewayMetadataMissingFieldsException, JSONException {
+	    throws GatewayMetadataFieldsException, JSONException {
 	List<EntityDefinitionProperty> entityProperties = new ArrayList<EntityDefinitionProperty>();
 	if (properties != null) {
 	    Iterator it = properties.keys();
@@ -115,9 +115,9 @@ public class JsonSchemaManager {
     }
 
     private void checkFieldNotNull(String expected, Object actual)
-	    throws GatewayMetadataMissingFieldsException {
+	    throws GatewayMetadataFieldsException {
 	if (actual == null) {
-	    throw new GatewayMetadataMissingFieldsException(expected
+	    throw new GatewayMetadataFieldsException(expected
 		    + " not found.");
 	}
     }

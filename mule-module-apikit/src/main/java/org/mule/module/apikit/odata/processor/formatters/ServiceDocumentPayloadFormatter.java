@@ -7,10 +7,7 @@ import java.util.Arrays;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.json.JSONException;
 import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
 import org.mule.module.apikit.odata.util.Helper;
 import org.mule.module.apikit.odata.util.UriInfoImpl;
 import org.odata4j.edm.EdmDataServices;
