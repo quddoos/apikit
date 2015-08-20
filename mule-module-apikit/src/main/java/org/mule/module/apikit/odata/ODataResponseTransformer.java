@@ -6,31 +6,10 @@
  */
 package org.mule.module.apikit.odata;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
-
-import org.json.JSONException;
 import org.mule.api.MuleEvent;
-import org.mule.module.apikit.odata.metadata.GatewayMetadataManager;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataMissingFieldsException;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataNotInitializedException;
-import org.mule.module.apikit.odata.metadata.exception.GatewayMetadataResourceNotFound;
-import org.mule.module.apikit.odata.metadata.model.entities.EntityDefinitionSet;
-import org.mule.module.apikit.odata.model.Entity;
-import org.mule.module.apikit.odata.util.Helper;
-import org.mule.module.apikit.odata.util.UriInfoImpl;
-import org.odata4j.format.FormatWriter;
-import org.odata4j.format.FormatWriterFactory;
-import org.odata4j.producer.EntitiesResponse;
+import org.mule.module.apikit.odata.processor.formatters.ODataPayloadFormatter;
+import org.mule.module.apikit.odata.processor.formatters.ODataPayloadFormatter.Format;
 import org.raml.model.Raml;
-
-import com.google.gson.JsonSyntaxException;
 
 public class ODataResponseTransformer {
 
@@ -39,19 +18,17 @@ public class ODataResponseTransformer {
 		if (payload.getContent() != null) {
 			event.getMessage().setPayload(payload.getContent());
 		} else {
-			String url = "http://localhost/";
 
-			String format = "atom";
+			Format format = Format.Atom;
 			if (event.getMessage().getOutboundProperty("Content-Type")
 					.equals("application/json")) {
-				format = "json";
+				format = Format.Json;
 			}
 
-			String entityName = "orders";
-			String entityName2 = entityName.replaceAll("\\(.*\\)", "");
 			StringBuffer result = new StringBuffer();
-			result.append(writeOutput(raml, payload.getEntities(), entityName2,
-					url, format));
+
+			ODataPayloadFormatter formatter = payload.getFormatter();
+			result.append(formatter.format(format));
 			event.getMessage().setPayload(result.toString());
 		}
 
@@ -60,25 +37,5 @@ public class ODataResponseTransformer {
 		}
 
 		return event;
-    }
-
-    private static String writeOutput(Raml raml, List<Entity> entities2, String entityName, String url, String format)
-	    throws JsonSyntaxException, FileNotFoundException, IOException, JSONException, GatewayMetadataMissingFieldsException, GatewayMetadataResourceNotFound, GatewayMetadataNotInitializedException {
-		StringWriter sw = new StringWriter();
-		FormatWriter<EntitiesResponse> fw = FormatWriterFactory
-				.getFormatWriter(EntitiesResponse.class,
-						Arrays.asList(MediaType.valueOf(MediaType.WILDCARD)),
-						format, null);
-
-		GatewayMetadataManager gwMetadataManager = Helper
-				.refreshMetadataManager(raml);
-		EntityDefinitionSet entitySet = gwMetadataManager.getEntitySet();
-		
-		EntitiesResponse entitiesResponse = Helper.convertEntitiesToOEntities(
-				entities2, entityName, entitySet);
-
-		UriInfo uriInfo = new UriInfoImpl(url);
-		fw.write(uriInfo, sw, entitiesResponse);
-		return sw.toString();
     }
 }

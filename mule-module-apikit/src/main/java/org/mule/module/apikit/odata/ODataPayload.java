@@ -9,34 +9,56 @@ package org.mule.module.apikit.odata;
 import java.util.List;
 
 import org.mule.module.apikit.odata.model.Entity;
+import org.mule.module.apikit.odata.processor.formatters.ODataPayloadFormatter;
 
-public class ODataPayload {
-
+public class ODataPayload
+{
 	private String content;
 	List<Entity> entities;
+	private ODataPayloadFormatter formatter;
 
-	public ODataPayload(String content) {
+	public ODataPayloadFormatter getFormatter()
+	{
+		return formatter;
+	}
+
+	public ODataPayload(String content)
+	{
 		this.content = content;
 	}
 
-	public ODataPayload(List<Entity> entities) {
+	public ODataPayload(List<Entity> entities)
+	{
 		this.entities = entities;
 	}
 
-	public String getContent() {
+	public ODataPayload()
+	{
+	}
+
+	public String getContent()
+	{
 		return content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(String content)
+	{
 		this.content = content;
 	}
 
-	public List<Entity> getEntities() {
+	public List<Entity> getEntities()
+	{
 		return entities;
 	}
 
-	public void setEntities(List<Entity> entities) {
+	public void setEntities(List<Entity> entities)
+	{
 		this.entities = entities;
+	}
+
+	public void setFormatter(ODataPayloadFormatter oDataPayloadFormatter)
+	{
+		this.formatter = oDataPayloadFormatter;
 	}
 
 }

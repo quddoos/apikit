@@ -79,7 +79,11 @@ public class ODataUriParser {
 			// build path
 			String apiPath = "/" + m.group(1) + id;
 
-			return new ODataApikitProcessor(raml, apiPath, querystring);
+			String entityName = "orders";
+			String entityName2 = entityName.replaceAll("\\(.*\\)", "");
+			String url = "http://localhost/";
+			
+			return new ODataApikitProcessor(raml, apiPath, querystring, entityName2, url);
 		} else {
 			String pattern = "^/([a-zA-Z0-9]+)/";
 			Pattern r = Pattern.compile(pattern);
