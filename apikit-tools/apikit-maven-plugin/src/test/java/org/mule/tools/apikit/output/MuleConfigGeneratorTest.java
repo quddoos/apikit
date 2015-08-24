@@ -118,7 +118,7 @@ public class MuleConfigGeneratorTest {
         API api = mock(API.class);
         when(api.getPath()).thenReturn("/api/*");
         when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
-
+        when(api.hasToCreateListenerConfig()).thenReturn(true);
         File raml = mock(File.class);
         when(raml.getName()).thenReturn("hello.raml");
         when(api.getRamlFile()).thenReturn(raml);

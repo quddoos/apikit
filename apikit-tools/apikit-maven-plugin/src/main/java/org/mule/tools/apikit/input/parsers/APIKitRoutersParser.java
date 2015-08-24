@@ -127,10 +127,6 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
         String httpListenerConfigId = httpListenerConfigRef != null ? httpListenerConfigRef.getValue() : HttpListenerConfig.DEFAULT_CONFIG_NAME;
 
         HttpListenerConfig httpListenerConfig = httpListenerConfigs.get(httpListenerConfigId);
-        if (httpListenerConfig == null)
-        {
-            throw new IllegalStateException("An HTTP Listener configuration is mandatory.");
-        }
         return httpListenerConfig;
 
     }
